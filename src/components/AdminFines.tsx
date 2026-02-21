@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { downloadExport } from '../services/export.service';
 import { useFines } from '../hooks/useFines';
 import { DollarSign, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import Pagination from './Pagination';
@@ -31,10 +32,18 @@ const AdminFines = () => {
 
     return (
         <div className="space-y-6">
-            <h2 className="text-2xl font-bold flex items-center gap-2 text-gray-800">
-                <DollarSign className="w-8 h-8 text-blue-600" />
-                Rekap Denda
-            </h2>
+            <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold flex items-center gap-2 text-gray-800">
+                    <DollarSign className="w-8 h-8 text-blue-600" />
+                    Rekap Denda
+                </h2>
+                <button
+                    onClick={() => downloadExport('damaged')}
+                    className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors text-sm"
+                >
+                    Export Barang Rusak/Hilang
+                </button>
+            </div>
 
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

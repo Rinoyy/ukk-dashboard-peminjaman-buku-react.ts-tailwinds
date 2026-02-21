@@ -4,6 +4,7 @@ import { getCategories, type Category } from '../services/category.service';
 import type { Book } from '../types/index';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
+import { downloadExport } from '../services/export.service';
 import {
     Plus,
     Search,
@@ -14,7 +15,8 @@ import {
     BookOpen,
     Layers,
     Copy,
-    Eye
+    Eye,
+    Download
 } from 'lucide-react';
 
 const AdminBooks = () => {
@@ -162,13 +164,22 @@ const AdminBooks = () => {
                     <BookOpen className="w-6 h-6 text-blue-600" />
                     Manage Books
                 </h2>
-                <button
-                    onClick={() => openBookModal()}
-                    className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                    <Plus className="w-4 h-4" />
-                    Add Book
-                </button>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => downloadExport('books')}
+                        className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+                    >
+                        <Download className="w-4 h-4" />
+                        Export CSV
+                    </button>
+                    <button
+                        onClick={() => openBookModal()}
+                        className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Add Book
+                    </button>
+                </div>
             </div>
 
             {/* Search */}

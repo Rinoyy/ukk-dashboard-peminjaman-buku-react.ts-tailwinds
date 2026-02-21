@@ -3,14 +3,13 @@ import { useBorrow } from '../hooks/useBorrow';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
 import type { Borrowing } from '../types';
-import { CheckCircle, XCircle, AlertCircle, DollarSign, Clock, BookOpen } from 'lucide-react';
+import { downloadExport } from '../services/export.service';
+import { CheckCircle, XCircle, AlertCircle, DollarSign, BookOpen, Download } from 'lucide-react';
 
 const AdminBorrowings = () => {
     const { borrowings, loading, error, fetchBorrowings, adminApproveBorrow, adminVerifyReturn, payFine } = useBorrow();
 
-    // Debug User
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    console.log('Current User in Dashboard:', user);
+
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 10;
 
@@ -113,7 +112,7 @@ const AdminBorrowings = () => {
         fetchBorrowings();
     }, [fetchBorrowings]);
 
-    console.log('Borrowings Data:', borrowings);
+
 
     const paginatedBorrowings = useMemo(() => {
         const start = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -132,10 +131,28 @@ const AdminBorrowings = () => {
 
     return (
         <div className="p-6 bg-white rounded-lg shadow">
-            <h2 className="mb-6 text-xl font-bold flex items-center gap-2">
-                <BookOpen className="w-6 h-6 text-blue-600" />
-                Borrowing Management
-            </h2>
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold flex items-center gap-2">
+                    <BookOpen className="w-6 h-6 text-blue-600" />
+                    Borrowing Management
+                </h2>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => downloadExport('borrowings')}
+                        className="flex items-center gap-2 px-3 py-1.5 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 text-sm transition-colors"
+                    >
+                        <Download className="w-4 h-4" />
+                        Peminjaman
+                    </button>
+                    <button
+                        onClick={() => downloadExport('returns')}
+                        className="flex items-center gap-2 px-3 py-1.5 text-green-600 border border-green-600 rounded-lg hover:bg-green-50 text-sm transition-colors"
+                    >
+                        <Download className="w-4 h-4" />
+                        Pengembalian
+                    </button>
+                </div>
+            </div>
 
             {borrowings.length === 0 ? (
                 <EmptyState message="Belum ada permintaan peminjaman." />

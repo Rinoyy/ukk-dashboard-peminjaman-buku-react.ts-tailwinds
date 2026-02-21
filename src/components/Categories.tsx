@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { getCategories, createCategory, updateCategory, deleteCategory, type Category } from '../services/category.service';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
+import { downloadExport } from '../services/export.service';
 
 const Categories = () => {
     const [categories, setCategories] = useState<Category[]>([]);
@@ -73,12 +74,20 @@ const Categories = () => {
         <div>
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-semibold">Book Categories</h3>
-                <button
-                    onClick={() => { setShowForm(true); setEditId(null); setFormData({ name: '', description: '' }); }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                    + Add Category
-                </button>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => downloadExport('categories')}
+                        className="px-4 py-2 text-blue-600 border border-blue-600 rounded hover:bg-blue-50 transition-colors"
+                    >
+                        Export CSV
+                    </button>
+                    <button
+                        onClick={() => { setShowForm(true); setEditId(null); setFormData({ name: '', description: '' }); }}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        + Add Category
+                    </button>
+                </div>
             </div>
 
             {showForm && (

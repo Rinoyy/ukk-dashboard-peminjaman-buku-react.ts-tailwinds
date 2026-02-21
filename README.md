@@ -13,8 +13,9 @@ Dashboard ini dirancang untuk memudahkan manajemen buku, peminjaman, hingga moni
 - **Copy Buku & QR Code:** Setiap buku dapat memiliki beberapa salinan (copies), masing-masing dengan nomor unik dan sistem pelacakan berbasis QR Code.
 
 ### 🔄 Sirkulasi (Peminjam & Pengembalian)
-- **Peminjaman:** Melacak status peminjaman siswa mulai dari pengajuan (pending) hingga status dipinjam.
+- **Peminjaman:** Melacak status peminjaman siswa mulai dari pengajuan (pending + reservasi copy) hingga status dipinjam.
 - **Pengembalian:** Memproses pengembalian buku dan mencatat kondisi buku (Baik/Rusak/Hilang).
+- **Anti Double-Booking:** Copy buku otomatis direservasi (`RESERVED`) saat pengajuan, mencegah konflik peminjaman.
 
 ### 💰 Pengelola Keuangan (Denda)
 - **Kalkulasi Denda:** Sistem secara otomatis menghitung denda jika terjadi keterlambatan pengembalian atau kerusakan buku.
@@ -27,6 +28,16 @@ Dashboard ini dirancang untuk memudahkan manajemen buku, peminjaman, hingga moni
 ### 📊 Monitoring & Statistik
 - **Statistik Cepat:** Melihat ringkasan jumlah buku, peminjaman aktif, dan denda melalui Dashboard Overview.
 - **Log Kunjungan:** Memantau riwayat kunjungan siswa ke perpustakaan.
+
+### 📥 Export Data (CSV)
+Semua data penting dapat didownload dalam format CSV melalui tombol **Export CSV** yang tersedia di setiap halaman:
+- **Buku** — Data buku lengkap dengan status setiap copy
+- **Kategori** — Daftar kategori + jumlah buku per kategori
+- **Peminjaman** — Data peminjaman aktif (Pending/Borrowed/Return Pending)
+- **Pengembalian** — Riwayat pengembalian dengan denda
+- **Pengguna** — Daftar siswa terdaftar
+- **Barang Rusak/Hilang** — Copy buku berstatus DAMAGED/LOST
+- **Kunjungan** — Log kunjungan siswa ke perpustakaan
 
 ## 💻 Pengembangan (Development)
 Dashboard ini dibangun menggunakan teknologi modern:

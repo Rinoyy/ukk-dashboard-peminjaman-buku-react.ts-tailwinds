@@ -17,6 +17,7 @@ export interface Category {
 }
 
 export interface Book {
+    categoryId: number;
     id: number;
     title: string;
     author: string;

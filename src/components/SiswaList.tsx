@@ -4,6 +4,7 @@ import type { User } from '../types/index';
 import UserProfile from './UserProfile';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
+import { downloadExport } from '../services/export.service';
 
 const SiswaList = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -56,7 +57,15 @@ const SiswaList = () => {
 
             <div className="flex justify-between mb-4">
                 <h2 className="text-xl font-bold">Registered Siswa</h2>
-                <button onClick={fetchUsers} className="text-sm text-blue-500 hover:underline">Refresh</button>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => downloadExport('users')}
+                        className="text-sm px-3 py-1 text-blue-600 border border-blue-600 rounded hover:bg-blue-50 transition-colors"
+                    >
+                        Export CSV
+                    </button>
+                    <button onClick={fetchUsers} className="text-sm text-blue-500 hover:underline">Refresh</button>
+                </div>
             </div>
 
             {users.length === 0 ? (
