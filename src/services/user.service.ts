@@ -1,4 +1,4 @@
-import { API_URL, forceLogout } from './api';
+import { API_URL, forceLogout, isUnauthorized } from './api';
 import type { User } from '../types/index';
 
 class UserService {
@@ -10,7 +10,7 @@ class UserService {
                 ...(token && { Authorization: `Bearer ${token}` }),
             },
         });
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -37,7 +37,7 @@ class UserService {
             },
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }

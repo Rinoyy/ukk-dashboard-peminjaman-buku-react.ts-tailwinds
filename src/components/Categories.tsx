@@ -3,11 +3,12 @@ import { categoryService, type Category } from '../services/category.service';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
 import { exportService } from '../services/export.service';
+import { Plus, Pencil, Trash2, X, FolderOpen, Download } from 'lucide-react';
 
 const Categories = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(false);
-    const [showForm, setShowForm] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [editId, setEditId] = useState<number | null>(null);
     const [formData, setFormData] = useState({ name: '', description: '' });
     const [currentPage, setCurrentPage] = useState(1);
@@ -45,7 +46,7 @@ const Categories = () => {
                 await categoryService.createCategory(formData);
             }
             setFormData({ name: '', description: '' });
-            setShowForm(false);
+            setIsModalOpen(false);
             setEditId(null);
             fetchCategories();
         } catch (error) {
@@ -56,7 +57,13 @@ const Categories = () => {
     const handleEdit = (cat: Category) => {
         setEditId(cat.id);
         setFormData({ name: cat.name, description: cat.description || '' });
-        setShowForm(true);
+        setIsModalOpen(true);
+    };
+
+    const openAddModal = () => {
+        setEditId(null);
+        setFormData({ name: '', description: '' });
+        setIsModalOpen(true);
     };
 
     const handleDelete = async (id: number) => {
@@ -71,94 +78,77 @@ const Categories = () => {
     };
 
     return (
-        <div>
+        <div className="p-6 bg-white rounded-lg shadow">
             <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-semibold">Book Categories</h3>
+                <h2 className="text-xl font-bold flex items-center gap-2">
+                    <FolderOpen className="w-6 h-6 text-blue-600" />
+                    Book Categories
+                </h2>
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => exportService.downloadExport('categories')}
-                        className="px-4 py-2 text-blue-600 border border-blue-600 rounded hover:bg-blue-50 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
                     >
+                        <Download className="w-4 h-4" />
                         Export CSV
                     </button>
                     <button
-                        onClick={() => { setShowForm(true); setEditId(null); setFormData({ name: '', description: '' }); }}
-                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                        onClick={openAddModal}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >
-                        + Add Category
+                        <Plus className="w-4 h-4" />
+                        Add Category
                     </button>
                 </div>
             </div>
 
-            {showForm && (
-                <form onSubmit={handleSubmit} className="mb-6 p-4 bg-gray-50 rounded-lg">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Name</label>
-                            <input
-                                type="text"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Description</label>
-                            <input
-                                type="text"
-                                value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                className="w-full p-2 border rounded"
-                            />
-                        </div>
-                    </div>
-                    <div className="mt-4 flex gap-2">
-                        <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-                            {editId ? 'Update' : 'Create'}
-                        </button>
-                        <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            )}
-
             {loading ? (
                 <p>Loading...</p>
             ) : categories.length === 0 ? (
-                <EmptyState message="Belum ada kategori. Klik '+ Add Category' untuk menambahkan." />
+                <EmptyState message="Belum ada kategori. Klik 'Add Category' untuk menambahkan." />
             ) : (
                 <>
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-gray-100">
-                                <th className="p-3 border-b">ID</th>
-                                <th className="p-3 border-b">Name</th>
-                                <th className="p-3 border-b">Description</th>
-                                <th className="p-3 border-b">Books</th>
-                                <th className="p-3 border-b">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {paginatedCategories.map((cat) => (
-                                <tr key={cat.id} className="hover:bg-gray-50">
-                                    <td className="p-3 border-b">{cat.id}</td>
-                                    <td className="p-3 border-b font-medium">{cat.name}</td>
-                                    <td className="p-3 border-b text-gray-600">{cat.description || '-'}</td>
-                                    <td className="p-3 border-b">{cat._count?.books || 0}</td>
-                                    <td className="p-3 border-b">
-                                        <button onClick={() => handleEdit(cat)} className="px-2 py-1 text-sm text-blue-600 hover:underline mr-2">
-                                            Edit
-                                        </button>
-                                        <button onClick={() => handleDelete(cat.id)} className="px-2 py-1 text-sm text-red-600 hover:underline">
-                                            Delete
-                                        </button>
-                                    </td>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-gray-100">
+                                    <th className="p-3 border-b">ID</th>
+                                    <th className="p-3 border-b">Name</th>
+                                    <th className="p-3 border-b">Description</th>
+                                    <th className="p-3 border-b">Books</th>
+                                    <th className="p-3 border-b text-right">Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {paginatedCategories.map((cat) => (
+                                    <tr key={cat.id} className="hover:bg-gray-50">
+                                        <td className="p-3 border-b">{cat.id}</td>
+                                        <td className="p-3 border-b font-medium">{cat.name}</td>
+                                        <td className="p-3 border-b text-gray-600">{cat.description || '-'}</td>
+                                        <td className="p-3 border-b">{cat._count?.books || 0}</td>
+                                        <td className="p-3 border-b text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <button
+                                                    onClick={() => handleEdit(cat)}
+                                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                    title="Edit"
+                                                >
+                                                    <Pencil className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(cat.id)}
+                                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                    title="Delete"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
@@ -167,6 +157,52 @@ const Categories = () => {
                         itemsPerPage={ITEMS_PER_PAGE}
                     />
                 </>
+            )}
+
+            {/* Add/Edit Category Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+                    <div className="w-full max-w-md p-6 bg-white rounded-xl shadow-xl">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-xl font-bold flex items-center gap-2">
+                                <FolderOpen className="w-5 h-5 text-blue-600" />
+                                {editId ? 'Edit Category' : 'Add Category'}
+                            </h3>
+                            <button onClick={() => setIsModalOpen(false)} className="p-1 hover:bg-gray-100 rounded-lg">
+                                <X className="w-5 h-5 text-gray-500" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmit}>
+                            <div className="mb-3">
+                                <label className="block text-sm font-medium mb-1">Name</label>
+                                <input
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium mb-1">Description</label>
+                                <textarea
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 h-24"
+                                    placeholder="Enter category description..."
+                                />
+                            </div>
+                            <div className="flex justify-end gap-2">
+                                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
+                                    Cancel
+                                </button>
+                                <button type="submit" className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+                                    {editId ? 'Update' : 'Create'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             )}
         </div>
     );

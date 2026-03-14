@@ -26,6 +26,7 @@ export interface Book {
         name: string;
     };
     description?: string;
+    image?: string;
     stock: number;
     createdAt: string;
     updatedAt: string;

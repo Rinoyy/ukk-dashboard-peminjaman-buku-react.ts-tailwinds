@@ -1,4 +1,4 @@
-import { API_URL, forceLogout } from './api';
+import { API_URL, forceLogout, isUnauthorized } from './api';
 import type { User } from '../types/index';
 
 interface LoginResponse {
@@ -25,7 +25,7 @@ class AuthService {
             body: JSON.stringify(credentials),
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -59,7 +59,7 @@ class AuthService {
             body: JSON.stringify(userData),
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }

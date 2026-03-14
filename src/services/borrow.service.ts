@@ -1,4 +1,4 @@
-import { API_URL, forceLogout } from './api';
+import { API_URL, forceLogout, isUnauthorized } from './api';
 import type { Borrowing, PaymentSuccessResponse } from '../types';
 
 class BorrowService {
@@ -11,7 +11,7 @@ class BorrowService {
             },
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -24,7 +24,7 @@ class BorrowService {
         return response.json();
     }
 
-    async adminApproveBorrow(id: number, status: 'BORROWED' | 'REJECTED'): Promise<Borrowing> {
+    async adminApproveBorrow(id: number, status: 'BORROWED' | 'REJECTED', rejectReason?: string): Promise<Borrowing> {
         if (!id || id <= 0) {
             throw new Error('ID peminjaman tidak valid');
         }
@@ -39,10 +39,10 @@ class BorrowService {
                 'Content-Type': 'application/json',
                 ...(token && { Authorization: `Bearer ${token}` }),
             },
-            body: JSON.stringify({ status }),
+            body: JSON.stringify({ status, rejectReason }),
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -81,7 +81,7 @@ class BorrowService {
             body: JSON.stringify({ status, condition, damageFee }),
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -112,7 +112,7 @@ class BorrowService {
             body: JSON.stringify({ amountPaid }),
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -134,7 +134,7 @@ class BorrowService {
             },
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }

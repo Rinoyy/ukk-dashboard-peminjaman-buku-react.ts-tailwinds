@@ -1,4 +1,4 @@
-import { API_URL, forceLogout } from './api';
+import { API_URL, forceLogout, isUnauthorized } from './api';
 import type { Book, BookCopy } from '../types/index';
 
 class BookService {
@@ -16,7 +16,7 @@ class BookService {
             },
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -42,7 +42,7 @@ class BookService {
             },
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -55,7 +55,7 @@ class BookService {
         return response.json();
     }
 
-    async createBook(bookData: Partial<Book> & { stock?: number }): Promise<Book> {
+    async createBook(bookData: Partial<Book> & { stock?: number }, imageFile?: File): Promise<Book> {
         if (!bookData.title || !bookData.title.trim()) {
             throw new Error('Judul buku wajib diisi');
         }
@@ -64,16 +64,23 @@ class BookService {
         }
 
         const token = localStorage.getItem('token');
+        const formData = new FormData();
+        if (bookData.title) formData.append('title', bookData.title);
+        if (bookData.author) formData.append('author', bookData.author);
+        if (bookData.categoryId) formData.append('categoryId', String(bookData.categoryId));
+        if (bookData.description) formData.append('description', bookData.description);
+        if (bookData.stock) formData.append('stock', String(bookData.stock));
+        if (imageFile) formData.append('image', imageFile);
+
         const response = await fetch(`${API_URL}/books`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 ...(token && { Authorization: `Bearer ${token}` }),
             },
-            body: JSON.stringify(bookData),
+            body: formData,
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -86,7 +93,7 @@ class BookService {
         return response.json();
     }
 
-    async updateBook(id: number, bookData: Partial<Book>): Promise<Book> {
+    async updateBook(id: number, bookData: Partial<Book>, imageFile?: File): Promise<Book> {
         if (!id || id <= 0) {
             throw new Error('ID buku tidak valid');
         }
@@ -95,16 +102,22 @@ class BookService {
         }
 
         const token = localStorage.getItem('token');
+        const formData = new FormData();
+        if (bookData.title) formData.append('title', bookData.title);
+        if (bookData.author) formData.append('author', bookData.author);
+        if (bookData.categoryId) formData.append('categoryId', String(bookData.categoryId));
+        if (bookData.description !== undefined) formData.append('description', bookData.description || '');
+        if (imageFile) formData.append('image', imageFile);
+
         const response = await fetch(`${API_URL}/books/${id}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
                 ...(token && { Authorization: `Bearer ${token}` }),
             },
-            body: JSON.stringify(bookData),
+            body: formData,
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -131,7 +144,7 @@ class BookService {
             },
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -162,7 +175,7 @@ class BookService {
             body: JSON.stringify({ status }),
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -188,7 +201,7 @@ class BookService {
             },
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -216,7 +229,7 @@ class BookService {
             body: JSON.stringify({ bookId }),
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -243,7 +256,7 @@ class BookService {
             },
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }

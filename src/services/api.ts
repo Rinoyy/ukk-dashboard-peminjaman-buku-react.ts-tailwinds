@@ -6,4 +6,8 @@ function forceLogout(): void {
     window.location.href = '/login';
 }
 
-export { API_URL, forceLogout };
+function isUnauthorized(status: number): boolean {
+    return status === 401 || status === 403;
+}
+
+export { API_URL, forceLogout, isUnauthorized };

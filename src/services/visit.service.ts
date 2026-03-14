@@ -1,4 +1,4 @@
-import { API_URL, forceLogout } from './api';
+import { API_URL, forceLogout, isUnauthorized } from './api';
 
 export interface Visit {
     id: number;
@@ -22,7 +22,7 @@ class VisitService {
             },
         });
 
-       if (response.status === 401) {
+       if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -44,7 +44,7 @@ class VisitService {
             },
         });
 
-     if (response.status === 401) {
+     if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -72,7 +72,7 @@ class VisitService {
             body: JSON.stringify({ userId }),
         });
 
-     if (response.status === 401) {
+     if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }

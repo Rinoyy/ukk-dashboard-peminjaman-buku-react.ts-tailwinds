@@ -16,8 +16,11 @@ import {
     Layers,
     Copy,
     Eye,
-    Download
+    Download,
+    ImagePlus
 } from 'lucide-react';
+
+const API_BASE = 'http://localhost:3000';
 
 const AdminBooks = () => {
     const { books, loading, fetchBooks, addBook, editBook, removeBook, addCopy, deleteCopy, updateCopyStatus } = useBooks();
@@ -33,6 +36,8 @@ const AdminBooks = () => {
 
     const [selectedBook, setSelectedBook] = useState<Book | null>(null);
     const [currentBookForm, setCurrentBookForm] = useState<Partial<Book> & { categoryId?: number, initialStock?: number }>({});
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
 
     // Pagination state
     const [booksPage, setBooksPage] = useState(1);
@@ -73,6 +78,24 @@ const AdminBooks = () => {
         }
     };
 
+    // --- Image handling ---
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setImageFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const clearImage = () => {
+        setImageFile(null);
+        setImagePreview(null);
+    };
+
     // --- Book Management Helper Functions ---
     const handleSaveBook = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -86,13 +109,15 @@ const AdminBooks = () => {
 
         if (currentBookForm.id) {
             // Edit existing book
-            await editBook(currentBookForm.id, bookData);
+            await editBook(currentBookForm.id, bookData, imageFile || undefined);
         } else {
             // Create new book
-            await addBook(bookData);
+            await addBook(bookData, imageFile || undefined);
         }
         setIsBookModalOpen(false);
         setCurrentBookForm({});
+        setImageFile(null);
+        setImagePreview(null);
     };
 
     const handleDeleteBook = async () => {
@@ -109,9 +134,17 @@ const AdminBooks = () => {
                 ...book,
                 categoryId: book.categoryId || book.category?.id,
             });
+            // Show existing image as preview
+            if (book.image) {
+                setImagePreview(`${API_BASE}${book.image}`);
+            } else {
+                setImagePreview(null);
+            }
         } else {
             setCurrentBookForm({ title: '', author: '', description: '', categoryId: undefined, initialStock: 1 });
+            setImagePreview(null);
         }
+        setImageFile(null);
         setIsBookModalOpen(true);
     };
 
@@ -205,6 +238,7 @@ const AdminBooks = () => {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-gray-100">
+                                    <th className="p-3 border-b">Cover</th>
                                     <th className="p-3 border-b">Title</th>
                                     <th className="p-3 border-b">Author</th>
                                     <th className="p-3 border-b">Category</th>
@@ -216,6 +250,19 @@ const AdminBooks = () => {
                             <tbody>
                                 {paginatedBooks.map((book) => (
                                     <tr key={book.id} className="hover:bg-gray-50">
+                                        <td className="p-3 border-b">
+                                            {book.image ? (
+                                                <img
+                                                    src={`${API_BASE}${book.image}`}
+                                                    alt={book.title}
+                                                    className="w-12 h-16 object-cover rounded shadow-sm"
+                                                />
+                                            ) : (
+                                                <div className="w-12 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded flex items-center justify-center text-xl shadow-sm">
+                                                    📖
+                                                </div>
+                                            )}
+                                        </td>
                                         <td className="p-3 border-b font-medium">{book.title}</td>
                                         <td className="p-3 border-b">{book.author}</td>
                                         <td className="p-3 border-b">
@@ -276,7 +323,7 @@ const AdminBooks = () => {
             {/* 1. Add/Edit Book Modal */}
             {isBookModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-                    <div className="w-full max-w-md p-6 bg-white rounded-xl shadow-xl">
+                    <div className="w-full max-w-md p-6 bg-white rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-xl font-bold flex items-center gap-2">
                                 <BookOpen className="w-5 h-5 text-blue-600" />
@@ -287,6 +334,56 @@ const AdminBooks = () => {
                             </button>
                         </div>
                         <form onSubmit={handleSaveBook}>
+                            {/* Image Upload */}
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium mb-1">Cover Image</label>
+                                <div className="flex items-start gap-4">
+                                    {imagePreview ? (
+                                        <div className="relative">
+                                            <img
+                                                src={imagePreview}
+                                                alt="Preview"
+                                                className="w-24 h-32 object-cover rounded-lg shadow-sm border"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={clearImage}
+                                                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <label className="w-24 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors">
+                                            <ImagePlus className="w-6 h-6 text-gray-400 mb-1" />
+                                            <span className="text-xs text-gray-400">Upload</span>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleImageChange}
+                                                className="hidden"
+                                            />
+                                        </label>
+                                    )}
+                                    <div className="flex-1">
+                                        <p className="text-xs text-gray-500">Upload gambar cover buku (opsional).</p>
+                                        <p className="text-xs text-gray-400 mt-1">Format: JPG, PNG, WebP. Max 5MB.</p>
+                                        {imagePreview && (
+                                            <label className="inline-flex items-center gap-1 mt-2 text-xs text-blue-600 cursor-pointer hover:underline">
+                                                <ImagePlus className="w-3 h-3" />
+                                                Ganti gambar
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleImageChange}
+                                                    className="hidden"
+                                                />
+                                            </label>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="mb-3">
                                 <label className="block text-sm font-medium mb-1">Title</label>
                                 <input

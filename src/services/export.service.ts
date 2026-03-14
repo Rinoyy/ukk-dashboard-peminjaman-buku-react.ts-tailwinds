@@ -1,4 +1,4 @@
-import { API_URL, forceLogout } from './api';
+import { API_URL, forceLogout, isUnauthorized } from './api';
 
 type ExportType = 'books' | 'categories' | 'borrowings' | 'returns' | 'users' | 'damaged' | 'visits';
 
@@ -22,7 +22,7 @@ class ExportService {
                 },
             });
 
-         if (response.status === 401) {
+         if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }

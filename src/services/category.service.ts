@@ -1,4 +1,4 @@
-import { API_URL, forceLogout } from './api';
+import { API_URL, forceLogout, isUnauthorized } from './api';
 
 export interface Category {
     id: number;
@@ -17,7 +17,7 @@ class CategoryService {
             },
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             window.location.href = '/login';
@@ -47,7 +47,7 @@ class CategoryService {
             body: JSON.stringify(data),
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -78,7 +78,7 @@ class CategoryService {
             body: JSON.stringify(data),
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
@@ -105,7 +105,7 @@ class CategoryService {
             },
         });
 
-        if (response.status === 401) {
+        if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }

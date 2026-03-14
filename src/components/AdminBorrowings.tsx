@@ -17,6 +17,8 @@ const AdminBorrowings = () => {
     const [selectedBorrowing, setSelectedBorrowing] = useState<Borrowing | null>(null);
     const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+    const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+    const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
     // Return form
     const [returnCondition, setReturnCondition] = useState<'GOOD' | 'DAMAGED' | 'LOST'>('GOOD');
@@ -25,6 +27,11 @@ const AdminBorrowings = () => {
     // Payment form
     const [amountPaid, setAmountPaid] = useState<number | ''>(0); // Allow empty string
     const [change, setChange] = useState<number | null>(null);
+
+    // Reject form
+    const [rejectReason, setRejectReason] = useState('');
+    const [approveLoading, setApproveLoading] = useState(false);
+    const [rejectLoading, setRejectLoading] = useState(false);
 
     // ... (existing code)
 
@@ -48,10 +55,39 @@ const AdminBorrowings = () => {
 
     // ...
 
+    const openApproveModal = (borrowing: Borrowing) => {
+        setSelectedBorrowing(borrowing);
+        setIsApproveModalOpen(true);
+    };
+
+    const openRejectModal = (borrowing: Borrowing) => {
+        setSelectedBorrowing(borrowing);
+        setRejectReason('');
+        setIsRejectModalOpen(true);
+    };
+
+    const handleConfirmApprove = async () => {
+        if (!selectedBorrowing) return;
+        setApproveLoading(true);
+        await adminApproveBorrow(selectedBorrowing.id, 'BORROWED');
+        setApproveLoading(false);
+        setIsApproveModalOpen(false);
+        setSelectedBorrowing(null);
+    };
+
+    const handleConfirmReject = async () => {
+        if (!selectedBorrowing) return;
+        setRejectLoading(true);
+        await adminApproveBorrow(selectedBorrowing.id, 'REJECTED', rejectReason || undefined);
+        setRejectLoading(false);
+        setIsRejectModalOpen(false);
+        setSelectedBorrowing(null);
+    };
+
     const openReturnModal = (borrowing: Borrowing) => {
         setSelectedBorrowing(borrowing);
         setReturnCondition('GOOD');
-        setDamageFee(''); // Start empty or 0 if preferred, user wants to delete 0 easily so empty is better or 0 but handler fixes it
+        setDamageFee('');
         setIsReturnModalOpen(true);
     };
 
@@ -243,14 +279,14 @@ const AdminBorrowings = () => {
                                                 {b.status === 'PENDING' && (
                                                     <>
                                                         <button
-                                                            onClick={() => adminApproveBorrow(b.id, 'BORROWED')}
+                                                            onClick={() => openApproveModal(b)}
                                                             className="p-1.5 text-green-600 hover:bg-green-50 rounded"
                                                             title="Approve"
                                                         >
                                                             <CheckCircle className="w-5 h-5" />
                                                         </button>
                                                         <button
-                                                            onClick={() => adminApproveBorrow(b.id, 'REJECTED')}
+                                                            onClick={() => openRejectModal(b)}
                                                             className="p-1.5 text-red-600 hover:bg-red-50 rounded"
                                                             title="Reject"
                                                         >
@@ -405,6 +441,103 @@ const AdminBorrowings = () => {
                                     </button>
                                 </>
                             )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal Approve Borrow */}
+            {isApproveModalOpen && selectedBorrowing && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+                    <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-xl">
+                        <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                            <CheckCircle className="w-5 h-5 text-green-600" />
+                            Setujui Peminjaman?
+                        </h3>
+                        <div className="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-100">
+                            <div className="space-y-2 text-sm">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Siswa:</span>
+                                    <span className="font-medium">{selectedBorrowing.user?.username}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Buku:</span>
+                                    <span className="font-medium">{selectedBorrowing.bookCopy?.book.title}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Copy:</span>
+                                    <span className="font-medium">#{selectedBorrowing.bookCopy?.copyNumber}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-6">
+                            Buku akan dipinjamkan selama <span className="font-bold">7 hari</span>. Siswa akan menerima notifikasi untuk mengambil buku di perpustakaan.
+                        </p>
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={() => setIsApproveModalOpen(false)}
+                                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                            >
+                                Batal
+                            </button>
+                            <button
+                                onClick={handleConfirmApprove}
+                                disabled={approveLoading}
+                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
+                            >
+                                <CheckCircle className="w-4 h-4" />
+                                {approveLoading ? 'Memproses...' : 'Ya, Setujui'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal Reject Borrow */}
+            {isRejectModalOpen && selectedBorrowing && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+                    <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-xl">
+                        <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                            <XCircle className="w-5 h-5 text-red-600" />
+                            Tolak Peminjaman?
+                        </h3>
+                        <div className="mb-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
+                            <div className="space-y-2 text-sm">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Siswa:</span>
+                                    <span className="font-medium">{selectedBorrowing.user?.username}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Buku:</span>
+                                    <span className="font-medium">{selectedBorrowing.bookCopy?.book.title}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mb-6">
+                            <label className="block text-sm font-medium mb-1">Alasan Penolakan (opsional)</label>
+                            <textarea
+                                value={rejectReason}
+                                onChange={(e) => setRejectReason(e.target.value)}
+                                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-500 outline-none resize-none"
+                                rows={3}
+                                placeholder="Contoh: Stok habis, siswa masih punya pinjaman aktif..."
+                            />
+                        </div>
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={() => setIsRejectModalOpen(false)}
+                                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                            >
+                                Batal
+                            </button>
+                            <button
+                                onClick={handleConfirmReject}
+                                disabled={rejectLoading}
+                                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 flex items-center gap-2"
+                            >
+                                <XCircle className="w-4 h-4" />
+                                {rejectLoading ? 'Memproses...' : 'Ya, Tolak'}
+                            </button>
                         </div>
                     </div>
                 </div>

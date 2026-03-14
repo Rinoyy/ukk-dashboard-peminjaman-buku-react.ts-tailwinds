@@ -21,10 +21,10 @@ export const useBooks = () => {
         }
     }, []);
 
-    const addBook = async (bookData: any) => {
+    const addBook = async (bookData: any, imageFile?: File) => {
         setError(null);
         try {
-            await bookService.createBook(bookData);
+            await bookService.createBook(bookData, imageFile);
             fetchBooks();
             return true;
         } catch (error) {
@@ -34,10 +34,10 @@ export const useBooks = () => {
         }
     };
 
-    const editBook = async (id: number, bookData: any) => {
+    const editBook = async (id: number, bookData: any, imageFile?: File) => {
         setError(null);
         try {
-            await bookService.updateBook(id, bookData);
+            await bookService.updateBook(id, bookData, imageFile);
             fetchBooks();
             return true;
         } catch (error) {
