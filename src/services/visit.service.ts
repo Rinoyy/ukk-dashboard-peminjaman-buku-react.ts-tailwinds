@@ -28,6 +28,10 @@ class VisitService {
     }
 
     async checkIn(userId: number) {
+        if (!userId || userId <= 0) {
+            throw new Error('ID user tidak valid');
+        }
+
         const response = await fetch(`${API_URL}/visits/checkin`, {
             method: 'POST',
             headers: getHeaders(),

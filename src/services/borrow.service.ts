@@ -10,6 +10,13 @@ class BorrowService {
     }
 
     async adminApproveBorrow(id: number, status: 'BORROWED' | 'REJECTED'): Promise<Borrowing> {
+        if (!id || id <= 0) {
+            throw new Error('ID peminjaman tidak valid');
+        }
+        if (!status) {
+            throw new Error('Status wajib diisi');
+        }
+
         const response = await fetch(`${API_URL}/borrow/${id}/approve`, {
             method: 'POST',
             headers: getHeaders(),
@@ -24,6 +31,16 @@ class BorrowService {
         condition?: 'GOOD' | 'DAMAGED' | 'LOST',
         damageFee?: number
     ): Promise<Borrowing> {
+        if (!id || id <= 0) {
+            throw new Error('ID peminjaman tidak valid');
+        }
+        if (!status) {
+            throw new Error('Status wajib diisi');
+        }
+        if (damageFee !== undefined && damageFee < 0) {
+            throw new Error('Biaya kerusakan tidak boleh negatif');
+        }
+
         const response = await fetch(`${API_URL}/borrow/${id}/verify-return`, {
             method: 'POST',
             headers: getHeaders(),
@@ -33,6 +50,13 @@ class BorrowService {
     }
 
     async payFine(id: number, amountPaid: number): Promise<PaymentSuccessResponse> {
+        if (!id || id <= 0) {
+            throw new Error('ID peminjaman tidak valid');
+        }
+        if (amountPaid === undefined || amountPaid <= 0) {
+            throw new Error('Jumlah pembayaran harus lebih dari 0');
+        }
+
         const response = await fetch(`${API_URL}/borrow/${id}/pay`, {
             method: 'POST',
             headers: getHeaders(),

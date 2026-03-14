@@ -16,6 +16,10 @@ class CategoryService {
     }
 
     async createCategory(data: { name: string; description?: string }): Promise<Category> {
+        if (!data.name || !data.name.trim()) {
+            throw new Error('Nama kategori wajib diisi');
+        }
+
         const response = await fetch(`${API_URL}/categories`, {
             method: 'POST',
             headers: getHeaders(),
@@ -25,6 +29,13 @@ class CategoryService {
     }
 
     async updateCategory(id: number, data: { name: string; description?: string }): Promise<Category> {
+        if (!id || id <= 0) {
+            throw new Error('ID kategori tidak valid');
+        }
+        if (!data.name || !data.name.trim()) {
+            throw new Error('Nama kategori wajib diisi');
+        }
+
         const response = await fetch(`${API_URL}/categories/${id}`, {
             method: 'PUT',
             headers: getHeaders(),
@@ -34,6 +45,10 @@ class CategoryService {
     }
 
     async deleteCategory(id: number) {
+        if (!id || id <= 0) {
+            throw new Error('ID kategori tidak valid');
+        }
+
         const response = await fetch(`${API_URL}/categories/${id}`, {
             method: 'DELETE',
             headers: getHeaders(),

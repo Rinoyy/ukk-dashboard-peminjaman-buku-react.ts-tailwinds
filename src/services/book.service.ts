@@ -15,6 +15,10 @@ class BookService {
     }
 
     async getBookById(id: number): Promise<Book> {
+        if (!id || id <= 0) {
+            throw new Error('ID buku tidak valid');
+        }
+
         const response = await fetch(`${API_URL}/books/${id}`, {
             headers: getHeaders(),
         });
@@ -22,6 +26,13 @@ class BookService {
     }
 
     async createBook(bookData: Partial<Book> & { stock?: number }): Promise<Book> {
+        if (!bookData.title || !bookData.title.trim()) {
+            throw new Error('Judul buku wajib diisi');
+        }
+        if (!bookData.author || !bookData.author.trim()) {
+            throw new Error('Penulis buku wajib diisi');
+        }
+
         const response = await fetch(`${API_URL}/books`, {
             method: 'POST',
             headers: getHeaders(),
@@ -31,6 +42,13 @@ class BookService {
     }
 
     async updateBook(id: number, bookData: Partial<Book>): Promise<Book> {
+        if (!id || id <= 0) {
+            throw new Error('ID buku tidak valid');
+        }
+        if (!bookData || Object.keys(bookData).length === 0) {
+            throw new Error('Data buku yang akan diubah wajib diisi');
+        }
+
         const response = await fetch(`${API_URL}/books/${id}`, {
             method: 'PUT',
             headers: getHeaders(),
@@ -40,6 +58,10 @@ class BookService {
     }
 
     async deleteBook(id: number) {
+        if (!id || id <= 0) {
+            throw new Error('ID buku tidak valid');
+        }
+
         const response = await fetch(`${API_URL}/books/${id}`, {
             method: 'DELETE',
             headers: getHeaders(),
@@ -48,6 +70,13 @@ class BookService {
     }
 
     async updateCopyStatus(id: number, status: string) {
+        if (!id || id <= 0) {
+            throw new Error('ID copy tidak valid');
+        }
+        if (!status || !status.trim()) {
+            throw new Error('Status wajib diisi');
+        }
+
         const response = await fetch(`${API_URL}/copies/${id}/status`, {
             method: 'PATCH',
             headers: getHeaders(),
@@ -58,6 +87,10 @@ class BookService {
 
     // Book Copy Methods
     async getBookCopies(bookId: number): Promise<BookCopy[]> {
+        if (!bookId || bookId <= 0) {
+            throw new Error('ID buku tidak valid');
+        }
+
         const response = await fetch(`${API_URL}/copies/${bookId}`, {
             headers: getHeaders(),
         });
@@ -65,6 +98,10 @@ class BookService {
     }
 
     async addBookCopy(bookId: number): Promise<BookCopy> {
+        if (!bookId || bookId <= 0) {
+            throw new Error('ID buku tidak valid');
+        }
+
         const response = await fetch(`${API_URL}/copies`, {
             method: 'POST',
             headers: getHeaders(),
@@ -74,6 +111,10 @@ class BookService {
     }
 
     async deleteBookCopy(copyId: number) {
+        if (!copyId || copyId <= 0) {
+            throw new Error('ID copy tidak valid');
+        }
+
         const response = await fetch(`${API_URL}/copies/${copyId}`, {
             method: 'DELETE',
             headers: getHeaders(),
