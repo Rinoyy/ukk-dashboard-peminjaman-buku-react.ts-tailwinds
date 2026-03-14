@@ -1,4 +1,4 @@
-import { API_URL, getHeaders, handleResponse } from './api';
+import { API_URL, forceLogout } from './api';
 import type { Book, BookCopy } from '../types/index';
 
 class BookService {
@@ -8,10 +8,25 @@ class BookService {
         if (params?.categoryId) query.set('categoryId', String(params.categoryId));
         const qs = query.toString();
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/books${qs ? `?${qs}` : ''}`, {
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal mengambil data buku');
+        }
+
+        return response.json();
     }
 
     async getBookById(id: number): Promise<Book> {
@@ -19,10 +34,25 @@ class BookService {
             throw new Error('ID buku tidak valid');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/books/${id}`, {
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal mengambil detail buku');
+        }
+
+        return response.json();
     }
 
     async createBook(bookData: Partial<Book> & { stock?: number }): Promise<Book> {
@@ -33,12 +63,27 @@ class BookService {
             throw new Error('Penulis buku wajib diisi');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/books`, {
             method: 'POST',
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
             body: JSON.stringify(bookData),
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal menambah buku');
+        }
+
+        return response.json();
     }
 
     async updateBook(id: number, bookData: Partial<Book>): Promise<Book> {
@@ -49,12 +94,27 @@ class BookService {
             throw new Error('Data buku yang akan diubah wajib diisi');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/books/${id}`, {
             method: 'PUT',
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
             body: JSON.stringify(bookData),
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal mengubah buku');
+        }
+
+        return response.json();
     }
 
     async deleteBook(id: number) {
@@ -62,11 +122,26 @@ class BookService {
             throw new Error('ID buku tidak valid');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/books/${id}`, {
             method: 'DELETE',
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal menghapus buku');
+        }
+
+        return response.json();
     }
 
     async updateCopyStatus(id: number, status: string) {
@@ -77,24 +152,53 @@ class BookService {
             throw new Error('Status wajib diisi');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/copies/${id}/status`, {
             method: 'PATCH',
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
             body: JSON.stringify({ status }),
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal mengubah status copy');
+        }
+
+        return response.json();
     }
 
-    // Book Copy Methods
     async getBookCopies(bookId: number): Promise<BookCopy[]> {
         if (!bookId || bookId <= 0) {
             throw new Error('ID buku tidak valid');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/copies/${bookId}`, {
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal mengambil data copy');
+        }
+
+        return response.json();
     }
 
     async addBookCopy(bookId: number): Promise<BookCopy> {
@@ -102,12 +206,27 @@ class BookService {
             throw new Error('ID buku tidak valid');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/copies`, {
             method: 'POST',
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
             body: JSON.stringify({ bookId }),
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal menambah copy');
+        }
+
+        return response.json();
     }
 
     async deleteBookCopy(copyId: number) {
@@ -115,11 +234,26 @@ class BookService {
             throw new Error('ID copy tidak valid');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/copies/${copyId}`, {
             method: 'DELETE',
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal menghapus copy');
+        }
+
+        return response.json();
     }
 }
 

@@ -1,4 +1,4 @@
-import { API_URL, getHeaders } from './api';
+import { API_URL, forceLogout } from './api';
 
 type ExportType = 'books' | 'categories' | 'borrowings' | 'returns' | 'users' | 'damaged' | 'visits';
 
@@ -15,16 +15,17 @@ class ExportService {
 
     async downloadExport(type: ExportType): Promise<void> {
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch(`${API_URL}/export/${type}`, {
-                headers: getHeaders(),
+                headers: {
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                },
             });
 
-            if (response.status === 401) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                window.location.href = '/login';
-                return;
-            }
+         if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
 
             if (!response.ok) {
                 throw new Error('Export failed');

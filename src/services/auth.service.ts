@@ -1,4 +1,4 @@
-import { API_URL, getHeaders, handleResponse } from './api';
+import { API_URL, forceLogout } from './api';
 import type { User } from '../types/index';
 
 interface LoginResponse {
@@ -15,12 +15,27 @@ class AuthService {
             throw new Error('Password wajib diisi');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
             body: JSON.stringify(credentials),
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Login gagal');
+        }
+
+        return response.json();
     }
 
     async register(userData: { username: string; password: string; role: string }): Promise<{ message: string; user: User }> {
@@ -34,12 +49,27 @@ class AuthService {
             throw new Error('Role wajib diisi');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/auth/register`, {
             method: 'POST',
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
             body: JSON.stringify(userData),
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Registrasi gagal');
+        }
+
+        return response.json();
     }
 }
 

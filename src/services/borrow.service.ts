@@ -1,12 +1,27 @@
-import { API_URL, getHeaders, handleResponse } from './api';
+import { API_URL, forceLogout } from './api';
 import type { Borrowing, PaymentSuccessResponse } from '../types';
 
 class BorrowService {
     async getBorrowings(): Promise<Borrowing[]> {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/borrow`, {
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal mengambil data peminjaman');
+        }
+
+        return response.json();
     }
 
     async adminApproveBorrow(id: number, status: 'BORROWED' | 'REJECTED'): Promise<Borrowing> {
@@ -17,12 +32,27 @@ class BorrowService {
             throw new Error('Status wajib diisi');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/borrow/${id}/approve`, {
             method: 'POST',
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
             body: JSON.stringify({ status }),
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal menyetujui peminjaman');
+        }
+
+        return response.json();
     }
 
     async adminVerifyReturn(
@@ -41,12 +71,27 @@ class BorrowService {
             throw new Error('Biaya kerusakan tidak boleh negatif');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/borrow/${id}/verify-return`, {
             method: 'POST',
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
             body: JSON.stringify({ status, condition, damageFee }),
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal verifikasi pengembalian');
+        }
+
+        return response.json();
     }
 
     async payFine(id: number, amountPaid: number): Promise<PaymentSuccessResponse> {
@@ -57,19 +102,49 @@ class BorrowService {
             throw new Error('Jumlah pembayaran harus lebih dari 0');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/borrow/${id}/pay`, {
             method: 'POST',
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
             body: JSON.stringify({ amountPaid }),
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal membayar denda');
+        }
+
+        return response.json();
     }
 
     async getFinesRecap() {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/borrow/fines-recap`, {
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal mengambil rekap denda');
+        }
+
+        return response.json();
     }
 }
 

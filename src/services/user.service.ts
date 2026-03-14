@@ -1,12 +1,26 @@
-import { API_URL, getHeaders, handleResponse } from './api';
+import { API_URL, forceLogout } from './api';
 import type { User } from '../types/index';
 
 class UserService {
     async getUsers(): Promise<User[]> {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/users`, {
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
         });
-        return handleResponse(response);
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal mengambil data user');
+        }
+
+        return response.json();
     }
 
     async deleteUser(id: number) {
@@ -14,11 +28,26 @@ class UserService {
             throw new Error('ID user tidak valid');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/users/${id}`, {
             method: 'DELETE',
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
         });
-        return handleResponse(response);
+
+        if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal menghapus user');
+        }
+
+        return response.json();
     }
 }
 

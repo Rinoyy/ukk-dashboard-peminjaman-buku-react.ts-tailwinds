@@ -1,4 +1,4 @@
-import { API_URL, getHeaders, handleResponse } from './api';
+import { API_URL, forceLogout } from './api';
 
 export interface Visit {
     id: number;
@@ -14,17 +14,47 @@ export interface Visit {
 class VisitService {
     async getVisits(date?: string): Promise<Visit[]> {
         const qs = date ? `?date=${date}` : '';
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/visits${qs}`, {
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
         });
-        return handleResponse(response);
+
+       if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal mengambil data kunjungan');
+        }
+
+        return response.json();
     }
 
     async getTodayVisitsCount(): Promise<{ count: number; date: string }> {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/visits/today/count`, {
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
         });
-        return handleResponse(response);
+
+     if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal mengambil jumlah kunjungan');
+        }
+
+        return response.json();
     }
 
     async checkIn(userId: number) {
@@ -32,12 +62,27 @@ class VisitService {
             throw new Error('ID user tidak valid');
         }
 
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/visits/checkin`, {
             method: 'POST',
-            headers: getHeaders(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
             body: JSON.stringify({ userId }),
         });
-        return handleResponse(response);
+
+     if (response.status === 401) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal check-in');
+        }
+
+        return response.json();
     }
 }
 
