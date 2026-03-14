@@ -1,4 +1,4 @@
-import api from './api';
+import { API_URL, getHeaders, handleResponse } from './api';
 
 export interface Category {
     id: number;
@@ -7,22 +7,39 @@ export interface Category {
     _count?: { books: number };
 }
 
-export const getCategories = async () => {
-    const response = await api.get<Category[]>('/categories');
-    return response.data;
-};
+class CategoryService {
+    async getCategories(): Promise<Category[]> {
+        const response = await fetch(`${API_URL}/categories`, {
+            headers: getHeaders(),
+        });
+        return handleResponse(response);
+    }
 
-export const createCategory = async (data: { name: string; description?: string }) => {
-    const response = await api.post<Category>('/categories', data);
-    return response.data;
-};
+    async createCategory(data: { name: string; description?: string }): Promise<Category> {
+        const response = await fetch(`${API_URL}/categories`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(data),
+        });
+        return handleResponse(response);
+    }
 
-export const updateCategory = async (id: number, data: { name: string; description?: string }) => {
-    const response = await api.put<Category>(`/categories/${id}`, data);
-    return response.data;
-};
+    async updateCategory(id: number, data: { name: string; description?: string }): Promise<Category> {
+        const response = await fetch(`${API_URL}/categories/${id}`, {
+            method: 'PUT',
+            headers: getHeaders(),
+            body: JSON.stringify(data),
+        });
+        return handleResponse(response);
+    }
 
-export const deleteCategory = async (id: number) => {
-    const response = await api.delete(`/categories/${id}`);
-    return response.data;
-};
+    async deleteCategory(id: number) {
+        const response = await fetch(`${API_URL}/categories/${id}`, {
+            method: 'DELETE',
+            headers: getHeaders(),
+        });
+        return handleResponse(response);
+    }
+}
+
+export const categoryService = new CategoryService();

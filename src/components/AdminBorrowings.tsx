@@ -3,7 +3,7 @@ import { useBorrow } from '../hooks/useBorrow';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
 import type { Borrowing } from '../types';
-import { downloadExport } from '../services/export.service';
+import { exportService } from '../services/export.service';
 import { CheckCircle, XCircle, AlertCircle, DollarSign, BookOpen, Download } from 'lucide-react';
 
 const AdminBorrowings = () => {
@@ -138,14 +138,14 @@ const AdminBorrowings = () => {
                 </h2>
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={() => downloadExport('borrowings')}
+                        onClick={() => exportService.downloadExport('borrowings')}
                         className="flex items-center gap-2 px-3 py-1.5 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 text-sm transition-colors"
                     >
                         <Download className="w-4 h-4" />
                         Peminjaman
                     </button>
                     <button
-                        onClick={() => downloadExport('returns')}
+                        onClick={() => exportService.downloadExport('returns')}
                         className="flex items-center gap-2 px-3 py-1.5 text-green-600 border border-green-600 rounded-lg hover:bg-green-50 text-sm transition-colors"
                     >
                         <Download className="w-4 h-4" />
@@ -398,7 +398,7 @@ const AdminBorrowings = () => {
                                     </button>
                                     <button
                                         onClick={handleProcessPayment}
-                                        disabled={amountPaid < selectedBorrowing.totalFine}
+                                        disabled={(amountPaid === '' ? 0 : amountPaid) < selectedBorrowing.totalFine}
                                         className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         Bayar Sekarang

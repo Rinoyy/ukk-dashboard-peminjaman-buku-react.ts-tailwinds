@@ -1,12 +1,21 @@
-import api from './api';
+import { API_URL, getHeaders, handleResponse } from './api';
 import type { User } from '../types/index';
 
-export const getUsers = async () => {
-    const response = await api.get<User[]>('/users');
-    return response.data;
-};
+class UserService {
+    async getUsers(): Promise<User[]> {
+        const response = await fetch(`${API_URL}/users`, {
+            headers: getHeaders(),
+        });
+        return handleResponse(response);
+    }
 
-export const deleteUser = async (id: number) => {
-    const response = await api.delete(`/users/${id}`);
-    return response.data;
-};
+    async deleteUser(id: number) {
+        const response = await fetch(`${API_URL}/users/${id}`, {
+            method: 'DELETE',
+            headers: getHeaders(),
+        });
+        return handleResponse(response);
+    }
+}
+
+export const userService = new UserService();

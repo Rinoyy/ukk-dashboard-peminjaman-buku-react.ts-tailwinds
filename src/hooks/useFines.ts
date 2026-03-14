@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { getFinesRecap } from '../services/borrow.service';
+import { borrowService } from '../services/borrow.service';
 
 interface FinesSummary {
     totalPaid: number;
@@ -29,7 +29,7 @@ export const useFines = () => {
     const fetchFinesRecap = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await getFinesRecap();
+            const data = await borrowService.getFinesRecap();
             setSummary(data.summary);
             setFines(data.fines);
             setError(null);

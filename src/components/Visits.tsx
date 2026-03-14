@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo } from 'react';
-import { getVisits, type Visit } from '../services/visit.service';
+import { visitService, type Visit } from '../services/visit.service';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
-import { downloadExport } from '../services/export.service';
+import { exportService } from '../services/export.service';
 
 const Visits = () => {
     const [visits, setVisits] = useState<Visit[]>([]);
@@ -14,7 +14,7 @@ const Visits = () => {
     const fetchVisits = async () => {
         setLoading(true);
         try {
-            const data = await getVisits(selectedDate);
+            const data = await visitService.getVisits(selectedDate);
             setVisits(data);
         } catch (error) {
             console.error(error);
@@ -46,7 +46,7 @@ const Visits = () => {
                 </div>
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={() => downloadExport('visits')}
+                        onClick={() => exportService.downloadExport('visits')}
                         className="px-3 py-2 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-50 transition-colors"
                     >
                         Export CSV

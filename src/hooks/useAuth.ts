@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { login as loginService, register as registerService } from '../services/auth.service';
+import { authService } from '../services/auth.service';
 import type { User } from '../types/index';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,7 +18,7 @@ export const useAuth = () => {
 
     const login = async (credentials: any) => {
         try {
-            const data = await loginService(credentials);
+            const data = await authService.login(credentials);
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
             setUser(data.user);
@@ -33,7 +33,7 @@ export const useAuth = () => {
 
     const register = async (userData: any) => {
         try {
-            await registerService(userData);
+            await authService.register(userData);
             return true;
         } catch (error) {
             console.error(error);

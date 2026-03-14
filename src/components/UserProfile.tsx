@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getUsers } from '../services/user.service';
+import { userService } from '../services/user.service';
 import type { User } from '../types/index';
 
 interface UserProfileProps {
@@ -20,7 +20,7 @@ const UserProfile = ({ userId, onClose }: UserProfileProps) => {
     const fetchUser = async () => {
         setLoading(true);
         try {
-            const users = await getUsers();
+            const users = await userService.getUsers();
             const found = users.find(u => u.id === userId);
             if (found) setUser(found);
         } catch (error) {

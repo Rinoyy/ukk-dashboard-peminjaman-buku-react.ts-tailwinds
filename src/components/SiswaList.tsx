@@ -1,10 +1,10 @@
 import { useEffect, useState, useMemo } from 'react';
-import { getUsers, deleteUser } from '../services/user.service';
+import { userService } from '../services/user.service';
 import type { User } from '../types/index';
 import UserProfile from './UserProfile';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
-import { downloadExport } from '../services/export.service';
+import { exportService } from '../services/export.service';
 
 const SiswaList = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -16,7 +16,7 @@ const SiswaList = () => {
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const data = await getUsers();
+            const data = await userService.getUsers();
             setUsers(data.filter(u => u.role === 'SISWA'));
         } catch (error) {
             console.error(error);
@@ -39,7 +39,7 @@ const SiswaList = () => {
     const handleDelete = async (id: number) => {
         if (confirm('Are you sure you want to delete this Siswa?')) {
             try {
-                await deleteUser(id);
+                await userService.deleteUser(id);
                 fetchUsers();
             } catch (error) {
                 alert('Failed to delete user');
@@ -59,7 +59,7 @@ const SiswaList = () => {
                 <h2 className="text-xl font-bold">Registered Siswa</h2>
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={() => downloadExport('users')}
+                        onClick={() => exportService.downloadExport('users')}
                         className="text-sm px-3 py-1 text-blue-600 border border-blue-600 rounded hover:bg-blue-50 transition-colors"
                     >
                         Export CSV

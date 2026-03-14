@@ -1,27 +1,32 @@
-import axios from 'axios';
+const API_URL = 'http://localhost:3000/api';
 
-const api = axios.create({
-    baseURL: 'http://localhost:3000/api', // Adjust base URL if needed
-});
-
-api.interceptors.request.use((config) => {
+function getHeaders(): Record<string, string> {
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+    };
     const token = localStorage.getItem('token');
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        headers['Authorization'] = `Bearer ${token}`;
     }
-    return config;
-});
+    return headers;
+}
 
-api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
-        }
-        return Promise.reject(error);
+async function handleResponse(response: Response) {
+    if (response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+        throw new Error('Unauthorized');
     }
-);
 
-export default api;
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const error: any = new Error(errorData.message || 'Request failed');
+        error.response = { status: response.status, data: errorData };
+        throw error;
+    }
+
+    return response.json();
+}
+
+export { API_URL, getHeaders, handleResponse };

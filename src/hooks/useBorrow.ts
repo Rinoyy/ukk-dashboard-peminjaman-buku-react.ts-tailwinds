@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { getBorrowings, adminApproveBorrow, adminVerifyReturn, payFine } from '../services/borrow.service';
+import { borrowService } from '../services/borrow.service';
 import type { Borrowing, PaymentSuccessResponse } from '../types';
 
 export const useBorrow = () => {
@@ -10,7 +10,7 @@ export const useBorrow = () => {
     const fetchBorrowings = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await getBorrowings();
+            const data = await borrowService.getBorrowings();
             setBorrowings(data);
             setError(null);
         } catch (err) {
@@ -23,7 +23,7 @@ export const useBorrow = () => {
 
     const handleApprove = async (id: number, status: 'BORROWED' | 'REJECTED') => {
         try {
-            await adminApproveBorrow(id, status);
+            await borrowService.adminApproveBorrow(id, status);
             fetchBorrowings();
             return true;
         } catch (err) {
@@ -39,7 +39,7 @@ export const useBorrow = () => {
         damageFee?: number
     ) => {
         try {
-            const result = await adminVerifyReturn(id, status, condition, damageFee);
+            const result = await borrowService.adminVerifyReturn(id, status, condition, damageFee);
             fetchBorrowings();
             return result;
         } catch (err) {
@@ -50,7 +50,7 @@ export const useBorrow = () => {
 
     const handlePayFine = async (id: number, amountPaid: number) => {
         try {
-            const result = await payFine(id, amountPaid);
+            const result = await borrowService.payFine(id, amountPaid);
             fetchBorrowings();
             return result;
         } catch (err: any) {

@@ -1,13 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import {
-    getBooks,
-    createBook,
-    updateBook,
-    deleteBook,
-    addBookCopy as createBookCopy,
-    deleteBookCopy,
-    updateCopyStatus as updateBookCopyStatus
-} from '../services/book.service';
+import { bookService } from '../services/book.service';
 import type { Book } from '../types/index';
 
 export const useBooks = () => {
@@ -18,7 +10,7 @@ export const useBooks = () => {
     const fetchBooks = useCallback(async (params?: any) => {
         setLoading(true);
         try {
-            const data = await getBooks(params);
+            const data = await bookService.getBooks(params);
             setBooks(data);
             setError(null);
         } catch (error) {
@@ -32,7 +24,7 @@ export const useBooks = () => {
     const addBook = async (bookData: any) => {
         setError(null);
         try {
-            await createBook(bookData);
+            await bookService.createBook(bookData);
             fetchBooks();
             return true;
         } catch (error) {
@@ -45,7 +37,7 @@ export const useBooks = () => {
     const editBook = async (id: number, bookData: any) => {
         setError(null);
         try {
-            await updateBook(id, bookData);
+            await bookService.updateBook(id, bookData);
             fetchBooks();
             return true;
         } catch (error) {
@@ -58,7 +50,7 @@ export const useBooks = () => {
     const removeBook = async (id: number) => {
         setError(null);
         try {
-            await deleteBook(id);
+            await bookService.deleteBook(id);
             fetchBooks();
             return true;
         } catch (error) {
@@ -71,7 +63,7 @@ export const useBooks = () => {
     const addCopy = async (bookId: number) => {
         setError(null);
         try {
-            await createBookCopy(bookId);
+            await bookService.addBookCopy(bookId);
             fetchBooks();
             return true;
         } catch (error) {
@@ -84,7 +76,7 @@ export const useBooks = () => {
     const deleteCopy = async (id: number) => {
         setError(null);
         try {
-            await deleteBookCopy(id);
+            await bookService.deleteBookCopy(id);
             fetchBooks();
             return true;
         } catch (err) {
@@ -97,7 +89,7 @@ export const useBooks = () => {
     const updateCopyStatus = async (id: number, status: string) => {
         setError(null);
         try {
-            await updateBookCopyStatus(id, status);
+            await bookService.updateCopyStatus(id, status);
             fetchBooks();
             return true;
         } catch (err: any) {

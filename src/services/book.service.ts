@@ -1,48 +1,85 @@
-import api from './api';
+import { API_URL, getHeaders, handleResponse } from './api';
 import type { Book, BookCopy } from '../types/index';
 
-export const getBooks = async (params?: { search?: string; categoryId?: number }) => {
-    const response = await api.get<Book[]>('/books', { params });
-    return response.data;
-};
+class BookService {
+    async getBooks(params?: { search?: string; categoryId?: number }): Promise<Book[]> {
+        const query = new URLSearchParams();
+        if (params?.search) query.set('search', params.search);
+        if (params?.categoryId) query.set('categoryId', String(params.categoryId));
+        const qs = query.toString();
 
-export const getBookById = async (id: number) => {
-    const response = await api.get<Book>(`/books/${id}`);
-    return response.data;
-};
+        const response = await fetch(`${API_URL}/books${qs ? `?${qs}` : ''}`, {
+            headers: getHeaders(),
+        });
+        return handleResponse(response);
+    }
 
-export const createBook = async (bookData: Partial<Book> & { stock?: number }) => {
-    const response = await api.post<Book>('/books', bookData);
-    return response.data;
-};
+    async getBookById(id: number): Promise<Book> {
+        const response = await fetch(`${API_URL}/books/${id}`, {
+            headers: getHeaders(),
+        });
+        return handleResponse(response);
+    }
 
-export const updateBook = async (id: number, bookData: Partial<Book>) => {
-    const response = await api.put<Book>(`/books/${id}`, bookData);
-    return response.data;
-};
+    async createBook(bookData: Partial<Book> & { stock?: number }): Promise<Book> {
+        const response = await fetch(`${API_URL}/books`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(bookData),
+        });
+        return handleResponse(response);
+    }
 
-export const deleteBook = async (id: number) => {
-    const response = await api.delete(`/books/${id}`);
-    return response.data;
-};
+    async updateBook(id: number, bookData: Partial<Book>): Promise<Book> {
+        const response = await fetch(`${API_URL}/books/${id}`, {
+            method: 'PUT',
+            headers: getHeaders(),
+            body: JSON.stringify(bookData),
+        });
+        return handleResponse(response);
+    }
 
-export const updateCopyStatus = async (id: number, status: string) => {
-    const response = await api.patch(`/copies/${id}/status`, { status });
-    return response.data;
-};
+    async deleteBook(id: number) {
+        const response = await fetch(`${API_URL}/books/${id}`, {
+            method: 'DELETE',
+            headers: getHeaders(),
+        });
+        return handleResponse(response);
+    }
 
-// Book Copy Services
-export const getBookCopies = async (bookId: number) => {
-    const response = await api.get<BookCopy[]>(`/copies/${bookId}`);
-    return response.data;
-};
+    async updateCopyStatus(id: number, status: string) {
+        const response = await fetch(`${API_URL}/copies/${id}/status`, {
+            method: 'PATCH',
+            headers: getHeaders(),
+            body: JSON.stringify({ status }),
+        });
+        return handleResponse(response);
+    }
 
-export const addBookCopy = async (bookId: number) => {
-    const response = await api.post<BookCopy>('/copies', { bookId });
-    return response.data;
-};
+    // Book Copy Methods
+    async getBookCopies(bookId: number): Promise<BookCopy[]> {
+        const response = await fetch(`${API_URL}/copies/${bookId}`, {
+            headers: getHeaders(),
+        });
+        return handleResponse(response);
+    }
 
-export const deleteBookCopy = async (copyId: number) => {
-    const response = await api.delete(`/copies/${copyId}`);
-    return response.data;
-};
+    async addBookCopy(bookId: number): Promise<BookCopy> {
+        const response = await fetch(`${API_URL}/copies`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ bookId }),
+        });
+        return handleResponse(response);
+    }
+
+    async deleteBookCopy(copyId: number) {
+        const response = await fetch(`${API_URL}/copies/${copyId}`, {
+            method: 'DELETE',
+            headers: getHeaders(),
+        });
+        return handleResponse(response);
+    }
+}
+
+export const bookService = new BookService();

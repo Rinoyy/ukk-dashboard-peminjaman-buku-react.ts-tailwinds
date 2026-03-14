@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getTodayVisitsCount } from '../services/visit.service';
+import { visitService } from '../services/visit.service';
 
 const DashboardOverview = () => {
     const [visitCount, setVisitCount] = useState(0);
@@ -7,7 +7,7 @@ const DashboardOverview = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await getTodayVisitsCount();
+                const data = await visitService.getTodayVisitsCount();
                 setVisitCount(data.count);
             } catch (error) {
                 console.error(error);

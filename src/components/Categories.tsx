@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo } from 'react';
-import { getCategories, createCategory, updateCategory, deleteCategory, type Category } from '../services/category.service';
+import { categoryService, type Category } from '../services/category.service';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
-import { downloadExport } from '../services/export.service';
+import { exportService } from '../services/export.service';
 
 const Categories = () => {
     const [categories, setCategories] = useState<Category[]>([]);
@@ -16,7 +16,7 @@ const Categories = () => {
     const fetchCategories = async () => {
         setLoading(true);
         try {
-            const data = await getCategories();
+            const data = await categoryService.getCategories();
             setCategories(data);
         } catch (error) {
             console.error(error);
@@ -40,9 +40,9 @@ const Categories = () => {
         e.preventDefault();
         try {
             if (editId) {
-                await updateCategory(editId, formData);
+                await categoryService.updateCategory(editId, formData);
             } else {
-                await createCategory(formData);
+                await categoryService.createCategory(formData);
             }
             setFormData({ name: '', description: '' });
             setShowForm(false);
@@ -62,7 +62,7 @@ const Categories = () => {
     const handleDelete = async (id: number) => {
         if (confirm('Delete this category?')) {
             try {
-                await deleteCategory(id);
+                await categoryService.deleteCategory(id);
                 fetchCategories();
             } catch (error) {
                 alert('Failed to delete. Category might have books.');
@@ -76,7 +76,7 @@ const Categories = () => {
                 <h3 className="text-lg font-semibold">Book Categories</h3>
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={() => downloadExport('categories')}
+                        onClick={() => exportService.downloadExport('categories')}
                         className="px-4 py-2 text-blue-600 border border-blue-600 rounded hover:bg-blue-50 transition-colors"
                     >
                         Export CSV

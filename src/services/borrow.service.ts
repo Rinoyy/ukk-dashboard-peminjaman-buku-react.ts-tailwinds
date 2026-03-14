@@ -1,36 +1,52 @@
-import api from './api';
+import { API_URL, getHeaders, handleResponse } from './api';
 import type { Borrowing, PaymentSuccessResponse } from '../types';
 
-export const getBorrowings = async () => {
-    const response = await api.get<Borrowing[]>('/borrow');
-    return response.data;
-};
+class BorrowService {
+    async getBorrowings(): Promise<Borrowing[]> {
+        const response = await fetch(`${API_URL}/borrow`, {
+            headers: getHeaders(),
+        });
+        return handleResponse(response);
+    }
 
-export const adminApproveBorrow = async (id: number, status: 'BORROWED' | 'REJECTED') => {
-    const response = await api.post<Borrowing>(`/borrow/${id}/approve`, { status });
-    return response.data;
-};
+    async adminApproveBorrow(id: number, status: 'BORROWED' | 'REJECTED'): Promise<Borrowing> {
+        const response = await fetch(`${API_URL}/borrow/${id}/approve`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ status }),
+        });
+        return handleResponse(response);
+    }
 
-export const adminVerifyReturn = async (
-    id: number,
-    status: 'RETURNED' | 'BORROWED',
-    condition?: 'GOOD' | 'DAMAGED' | 'LOST',
-    damageFee?: number
-) => {
-    const response = await api.post<Borrowing>(`/borrow/${id}/verify-return`, {
-        status,
-        condition,
-        damageFee
-    });
-    return response.data;
-};
+    async adminVerifyReturn(
+        id: number,
+        status: 'RETURNED' | 'BORROWED',
+        condition?: 'GOOD' | 'DAMAGED' | 'LOST',
+        damageFee?: number
+    ): Promise<Borrowing> {
+        const response = await fetch(`${API_URL}/borrow/${id}/verify-return`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ status, condition, damageFee }),
+        });
+        return handleResponse(response);
+    }
 
-export const payFine = async (id: number, amountPaid: number) => {
-    const response = await api.post<PaymentSuccessResponse>(`/borrow/${id}/pay`, { amountPaid });
-    return response.data;
-};
+    async payFine(id: number, amountPaid: number): Promise<PaymentSuccessResponse> {
+        const response = await fetch(`${API_URL}/borrow/${id}/pay`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ amountPaid }),
+        });
+        return handleResponse(response);
+    }
 
-export const getFinesRecap = async () => {
-    const response = await api.get<any>('/borrow/fines-recap');
-    return response.data;
-};
+    async getFinesRecap() {
+        const response = await fetch(`${API_URL}/borrow/fines-recap`, {
+            headers: getHeaders(),
+        });
+        return handleResponse(response);
+    }
+}
+
+export const borrowService = new BorrowService();

@@ -1,4 +1,4 @@
-import api from './api';
+import { API_URL, getHeaders, handleResponse } from './api';
 
 export interface Visit {
     id: number;
@@ -11,18 +11,30 @@ export interface Visit {
     };
 }
 
-export const getVisits = async (date?: string) => {
-    const params = date ? { date } : {};
-    const response = await api.get<Visit[]>('/visits', { params });
-    return response.data;
-};
+class VisitService {
+    async getVisits(date?: string): Promise<Visit[]> {
+        const qs = date ? `?date=${date}` : '';
+        const response = await fetch(`${API_URL}/visits${qs}`, {
+            headers: getHeaders(),
+        });
+        return handleResponse(response);
+    }
 
-export const getTodayVisitsCount = async () => {
-    const response = await api.get<{ count: number; date: string }>('/visits/today/count');
-    return response.data;
-};
+    async getTodayVisitsCount(): Promise<{ count: number; date: string }> {
+        const response = await fetch(`${API_URL}/visits/today/count`, {
+            headers: getHeaders(),
+        });
+        return handleResponse(response);
+    }
 
-export const checkIn = async (userId: number) => {
-    const response = await api.post('/visits/checkin', { userId });
-    return response.data;
-};
+    async checkIn(userId: number) {
+        const response = await fetch(`${API_URL}/visits/checkin`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ userId }),
+        });
+        return handleResponse(response);
+    }
+}
+
+export const visitService = new VisitService();

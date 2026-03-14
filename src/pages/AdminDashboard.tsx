@@ -7,7 +7,7 @@ import AdminBooks from '../components/AdminBooks';
 import AdminBorrowings from '../components/AdminBorrowings';
 import AdminFines from '../components/AdminFines';
 import Visits from '../components/Visits';
-import { register as registerService } from '../services/auth.service';
+import { authService } from '../services/auth.service';
 
 const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -18,7 +18,7 @@ const AdminDashboard = () => {
     const handleRegisterSiswa = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await registerService({ username: regUsername, password: regPassword, role: 'SISWA' });
+            await authService.register({ username: regUsername, password: regPassword, role: 'SISWA' });
             setRegMessage('Siswa registered successfully!');
             setRegUsername('');
             setRegPassword('');
