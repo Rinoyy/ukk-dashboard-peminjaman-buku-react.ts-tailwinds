@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { borrowService } from '../services/borrow.service';
+import { borrowService } from '../services/borrowService';
 
 interface FinesSummary {
     totalPaid: number;

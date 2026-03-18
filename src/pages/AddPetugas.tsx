@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../lib/api';
+import { useNavigate } from 'react-router';
+import { useAuth } from '../hooks/useAuth';
 import { UserPlus, ArrowLeft } from 'lucide-react';
 
 export default function AddPetugas() {
@@ -8,15 +8,16 @@ export default function AddPetugas() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { register } = useAuth();
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
-        try {
-            // Role is hardcoded to PETUGAS here, validation on backend ensures only Admin can do this
-            await api.post('/auth/register', { username, password, role: 'PETUGAS' });
+        setError('');
+        const success = await register({ username, password, role: 'PETUGAS' });
+        if (success) {
             navigate('/');
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Failed to add petugas');
+        } else {
+            setError('Failed to add petugas');
         }
     };
 

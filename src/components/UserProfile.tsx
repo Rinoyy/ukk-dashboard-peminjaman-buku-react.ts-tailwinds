@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { userService } from '../services/user.service';
+import { userService } from '../services/userService';
 import type { User } from '../types/index';
 
 interface UserProfileProps {

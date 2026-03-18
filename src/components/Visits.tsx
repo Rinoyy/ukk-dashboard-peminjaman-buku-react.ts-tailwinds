@@ -1,32 +1,20 @@
 import { useEffect, useState, useMemo } from 'react';
-import { visitService, type Visit } from '../services/visit.service';
+import { useVisits } from '../hooks/useVisits';
+import { useExport } from '../hooks/useExport';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
-import { exportService } from '../services/export.service';
 
 const Visits = () => {
-    const [visits, setVisits] = useState<Visit[]>([]);
-    const [loading, setLoading] = useState(false);
+    const { visits, loading, fetchVisits } = useVisits();
+    const { downloadExport } = useExport();
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 12;
 
-    const fetchVisits = async () => {
-        setLoading(true);
-        try {
-            const data = await visitService.getVisits(selectedDate);
-            setVisits(data);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
-        fetchVisits();
-        setCurrentPage(1); // Reset page when date changes
-    }, [selectedDate]);
+        fetchVisits(selectedDate);
+        setCurrentPage(1);
+    }, [selectedDate, fetchVisits]);
 
     const paginatedVisits = useMemo(() => {
         const start = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -46,7 +34,7 @@ const Visits = () => {
                 </div>
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={() => exportService.downloadExport('visits')}
+                        onClick={() => downloadExport('visits')}
                         className="px-3 py-2 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-50 transition-colors"
                     >
                         Export CSV

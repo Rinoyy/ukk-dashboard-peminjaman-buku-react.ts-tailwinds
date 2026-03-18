@@ -7,9 +7,10 @@ import AdminBooks from '../components/AdminBooks';
 import AdminBorrowings from '../components/AdminBorrowings';
 import AdminFines from '../components/AdminFines';
 import Visits from '../components/Visits';
-import { authService } from '../services/auth.service';
+import { useAuth } from '../hooks/useAuth';
 
 const AdminDashboard = () => {
+    const { register } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const [regUsername, setRegUsername] = useState('');
     const [regPassword, setRegPassword] = useState('');
@@ -17,12 +18,12 @@ const AdminDashboard = () => {
 
     const handleRegisterSiswa = async (e: React.FormEvent) => {
         e.preventDefault();
-        try {
-            await authService.register({ username: regUsername, password: regPassword, role: 'SISWA' });
+        const success = await register({ username: regUsername, password: regPassword, role: 'SISWA' });
+        if (success) {
             setRegMessage('Siswa registered successfully!');
             setRegUsername('');
             setRegPassword('');
-        } catch {
+        } else {
             setRegMessage('Failed to register Siswa.');
         }
     };
@@ -78,7 +79,7 @@ const AdminDashboard = () => {
             case 'borrowings':
                 return <AdminBorrowings />;
             case 'returns':
-                return <AdminBorrowings />; // Same component, could filter by status
+                return <AdminBorrowings />;
             case 'fines':
                 return <AdminFines />;
             case 'visits':

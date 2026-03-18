@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { borrowService } from '../services/borrow.service';
+import { borrowService } from '../services/borrowService';
 import type { Borrowing, PaymentSuccessResponse } from '../types';
 
 export const useBorrow = () => {

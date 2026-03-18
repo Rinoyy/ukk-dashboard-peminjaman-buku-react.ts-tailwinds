@@ -1,34 +1,18 @@
-import { useEffect, useState, useMemo } from 'react';
-import { categoryService, type Category } from '../services/category.service';
+import React, { useMemo, useState } from 'react';
+import { useCategories } from '../hooks/useCategories';
+import { useExport } from '../hooks/useExport';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
-import { exportService } from '../services/export.service';
 import { Plus, Pencil, Trash2, X, FolderOpen, Download } from 'lucide-react';
 
 const Categories = () => {
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [loading, setLoading] = useState(false);
+    const { categories, loading, addCategory, editCategory, removeCategory } = useCategories();
+    const { downloadExport } = useExport();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editId, setEditId] = useState<number | null>(null);
     const [formData, setFormData] = useState({ name: '', description: '' });
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 10;
-
-    const fetchCategories = async () => {
-        setLoading(true);
-        try {
-            const data = await categoryService.getCategories();
-            setCategories(data);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchCategories();
-    }, []);
 
     const paginatedCategories = useMemo(() => {
         const start = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -39,22 +23,22 @@ const Categories = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        try {
-            if (editId) {
-                await categoryService.updateCategory(editId, formData);
-            } else {
-                await categoryService.createCategory(formData);
-            }
+        let success: boolean;
+        if (editId) {
+            success = await editCategory(editId, formData);
+        } else {
+            success = await addCategory(formData);
+        }
+        if (success) {
             setFormData({ name: '', description: '' });
             setIsModalOpen(false);
             setEditId(null);
-            fetchCategories();
-        } catch (error) {
+        } else {
             alert('Failed to save category');
         }
     };
 
-    const handleEdit = (cat: Category) => {
+    const handleEdit = (cat: { id: number; name: string; description?: string }) => {
         setEditId(cat.id);
         setFormData({ name: cat.name, description: cat.description || '' });
         setIsModalOpen(true);
@@ -68,12 +52,8 @@ const Categories = () => {
 
     const handleDelete = async (id: number) => {
         if (confirm('Delete this category?')) {
-            try {
-                await categoryService.deleteCategory(id);
-                fetchCategories();
-            } catch (error) {
-                alert('Failed to delete. Category might have books.');
-            }
+            const success = await removeCategory(id);
+            if (!success) alert('Failed to delete. Category might have books.');
         }
     };
 
@@ -86,7 +66,7 @@ const Categories = () => {
                 </h2>
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={() => exportService.downloadExport('categories')}
+                        onClick={() => downloadExport('categories')}
                         className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
                     >
                         <Download className="w-4 h-4" />
@@ -159,7 +139,6 @@ const Categories = () => {
                 </>
             )}
 
-            {/* Add/Edit Category Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
                     <div className="w-full max-w-md p-6 bg-white rounded-xl shadow-xl">

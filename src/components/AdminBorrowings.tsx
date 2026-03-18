@@ -1,13 +1,14 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useBorrow } from '../hooks/useBorrow';
+import { useExport } from '../hooks/useExport';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
 import type { Borrowing } from '../types';
-import { exportService } from '../services/export.service';
 import { CheckCircle, XCircle, AlertCircle, DollarSign, BookOpen, Download } from 'lucide-react';
 
 const AdminBorrowings = () => {
     const { borrowings, loading, error, fetchBorrowings, adminApproveBorrow, adminVerifyReturn, payFine } = useBorrow();
+    const { downloadExport } = useExport();
 
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -174,14 +175,14 @@ const AdminBorrowings = () => {
                 </h2>
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={() => exportService.downloadExport('borrowings')}
+                        onClick={() => downloadExport('borrowings')}
                         className="flex items-center gap-2 px-3 py-1.5 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 text-sm transition-colors"
                     >
                         <Download className="w-4 h-4" />
                         Peminjaman
                     </button>
                     <button
-                        onClick={() => exportService.downloadExport('returns')}
+                        onClick={() => downloadExport('returns')}
                         className="flex items-center gap-2 px-3 py-1.5 text-green-600 border border-green-600 rounded-lg hover:bg-green-50 text-sm transition-colors"
                     >
                         <Download className="w-4 h-4" />

@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { exportService } from '../services/export.service';
 import { useFines } from '../hooks/useFines';
+import { useExport } from '../hooks/useExport';
 import { DollarSign, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import Pagination from './Pagination';
 
 const AdminFines = () => {
     const { summary, fines, loading, error } = useFines();
+    const { downloadExport } = useExport();
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 10;
 
@@ -38,7 +39,7 @@ const AdminFines = () => {
                     Rekap Denda
                 </h2>
                 <button
-                    onClick={() => exportService.downloadExport('damaged')}
+                    onClick={() => downloadExport('damaged')}
                     className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors text-sm"
                 >
                     Export Barang Rusak/Hilang

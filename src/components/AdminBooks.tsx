@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useBooks } from '../hooks/useBooks';
-import { categoryService, type Category } from '../services/category.service';
+import { useCategories } from '../hooks/useCategories';
+import { useExport } from '../hooks/useExport';
 import type { Book } from '../types/index';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
-import { exportService } from '../services/export.service';
 import {
     Plus,
     Search,
@@ -24,7 +24,8 @@ const API_BASE = 'http://localhost:3000';
 
 const AdminBooks = () => {
     const { books, loading, fetchBooks, addBook, editBook, removeBook, addCopy, deleteCopy, updateCopyStatus } = useBooks();
-    const [categories, setCategories] = useState<Category[]>([]);
+    const { categories } = useCategories();
+    const { downloadExport } = useExport();
     const [search, setSearch] = useState('');
 
     // Modals state
@@ -66,17 +67,7 @@ const AdminBooks = () => {
 
     useEffect(() => {
         fetchBooks({ search });
-        loadCategories();
     }, [search, fetchBooks]);
-
-    const loadCategories = async () => {
-        try {
-            const data = await categoryService.getCategories();
-            setCategories(data);
-        } catch (error) {
-            console.error('Failed to load categories', error);
-        }
-    };
 
     // --- Image handling ---
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,7 +190,7 @@ const AdminBooks = () => {
                 </h2>
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={() => exportService.downloadExport('books')}
+                        onClick={() => downloadExport('books')}
                         className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
                     >
                         <Download className="w-4 h-4" />

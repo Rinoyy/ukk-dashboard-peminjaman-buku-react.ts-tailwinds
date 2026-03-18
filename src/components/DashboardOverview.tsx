@@ -1,23 +1,15 @@
-import { useEffect, useState } from 'react';
-import { visitService } from '../services/visit.service';
+import { useEffect } from 'react';
+import { useVisits } from '../hooks/useVisits';
 
 const DashboardOverview = () => {
-    const [visitCount, setVisitCount] = useState(0);
+    const { todayCount, fetchTodayCount } = useVisits();
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await visitService.getTodayVisitsCount();
-                setVisitCount(data.count);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchData();
-    }, []);
+        fetchTodayCount();
+    }, [fetchTodayCount]);
 
     const stats = [
-        { label: "Pengunjung Hari Ini", value: visitCount, icon: "🚪", color: "bg-blue-500" },
+        { label: "Pengunjung Hari Ini", value: todayCount, icon: "🚪", color: "bg-blue-500" },
         { label: "Total Buku", value: "-", icon: "📚", color: "bg-green-500" },
         { label: "Peminjaman Aktif", value: "-", icon: "📤", color: "bg-yellow-500" },
         { label: "Menunggu Approval", value: "-", icon: "⏳", color: "bg-purple-500" },

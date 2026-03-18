@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { authService } from '../services/auth.service';
+import { authService } from '../services/authService';
 import type { User } from '../types/index';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 export const useAuth = () => {
     const [user, setUser] = useState<User | null>(null);
@@ -14,7 +14,14 @@ export const useAuth = () => {
             setUser(JSON.parse(storedUser));
         }
         setLoading(false);
-    }, []);
+
+        const handleForceLogout = () => {
+            setUser(null);
+            navigate('/login');
+        };
+        window.addEventListener('auth:logout', handleForceLogout);
+        return () => window.removeEventListener('auth:logout', handleForceLogout);
+    }, [navigate]);
 
     const login = async (credentials: any) => {
         try {

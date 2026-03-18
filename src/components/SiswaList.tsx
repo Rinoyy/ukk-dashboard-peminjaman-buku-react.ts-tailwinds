@@ -1,33 +1,16 @@
-import { useEffect, useState, useMemo } from 'react';
-import { userService } from '../services/user.service';
-import type { User } from '../types/index';
+import { useMemo, useState } from 'react';
+import { useUsers } from '../hooks/useUsers';
+import { useExport } from '../hooks/useExport';
 import UserProfile from './UserProfile';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
-import { exportService } from '../services/export.service';
 
 const SiswaList = () => {
-    const [users, setUsers] = useState<User[]>([]);
-    const [loading, setLoading] = useState(false);
+    const { users, loading, fetchUsers, deleteUser } = useUsers();
+    const { downloadExport } = useExport();
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 10;
-
-    const fetchUsers = async () => {
-        setLoading(true);
-        try {
-            const data = await userService.getUsers();
-            setUsers(data.filter(u => u.role === 'SISWA'));
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchUsers();
-    }, []);
 
     const paginatedUsers = useMemo(() => {
         const start = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -38,12 +21,8 @@ const SiswaList = () => {
 
     const handleDelete = async (id: number) => {
         if (confirm('Are you sure you want to delete this Siswa?')) {
-            try {
-                await userService.deleteUser(id);
-                fetchUsers();
-            } catch (error) {
-                alert('Failed to delete user');
-            }
+            const success = await deleteUser(id);
+            if (!success) alert('Failed to delete user');
         }
     };
 
@@ -59,7 +38,7 @@ const SiswaList = () => {
                 <h2 className="text-xl font-bold">Registered Siswa</h2>
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={() => exportService.downloadExport('users')}
+                        onClick={() => downloadExport('users')}
                         className="text-sm px-3 py-1 text-blue-600 border border-blue-600 rounded hover:bg-blue-50 transition-colors"
                     >
                         Export CSV

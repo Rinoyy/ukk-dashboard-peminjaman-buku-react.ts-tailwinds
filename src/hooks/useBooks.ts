@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { bookService } from '../services/book.service';
+import { bookService } from '../services/bookService';
 import type { Book } from '../types/index';
 
 export const useBooks = () => {
