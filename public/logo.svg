@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Cyan bottom arc -->
+  <ellipse cx="100" cy="158" rx="82" ry="14" fill="#29B8EA"/>
+
+  <!-- Left outer cover (dark navy) -->
+  <path d="M97 148 L15 105 L15 152 L97 152 Z" fill="#0C3F7A"/>
+  <!-- Left outer cover top wing -->
+  <path d="M97 50 L15 95 L15 108 L97 60 Z" fill="#0C3F7A"/>
+
+  <!-- Right outer cover (dark navy) -->
+  <path d="M103 148 L185 105 L185 152 L103 152 Z" fill="#0A3870"/>
+  <!-- Right outer cover top wing -->
+  <path d="M103 50 L185 95 L185 108 L103 60 Z" fill="#0A3870"/>
+
+  <!-- Left inner pages (orange) -->
+  <path d="M100 148 L100 35 L38 78 L40 148 Z" fill="#E8831C"/>
+  <!-- White page lines on orange -->
+  <line x1="72" y1="68"  x2="53" y2="96"  stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+  <line x1="74" y1="86"  x2="56" y2="112" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+  <line x1="75" y1="104" x2="59" y2="128" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+
+  <!-- Right inner pages (olive green) -->
+  <path d="M100 148 L100 35 L162 78 L160 148 Z" fill="#6E8E28"/>
+
+  <!-- Spine shadow/line -->
+  <line x1="100" y1="34" x2="100" y2="150" stroke="#072A55" stroke-width="3"/>
+</svg>
