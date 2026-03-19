@@ -4,7 +4,7 @@ import { useVisits } from '../hooks/useVisits';
 import { useExport } from '../hooks/useExport';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
-import { QrCode, LogIn, LogOut, X, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { QrCode, LogIn, LogOut, X, CheckCircle, XCircle, Loader2, Search } from 'lucide-react';
 
 type ScanMode = 'checkin' | 'checkout';
 
@@ -18,6 +18,7 @@ const Visits = () => {
     const { downloadExport } = useExport();
 
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 12;
 
@@ -40,12 +41,17 @@ const Visits = () => {
         }
     }, [scanResult, scanError, clearScan]);
 
+    const filteredVisits = useMemo(() => {
+        const q = search.toLowerCase();
+        return q ? visits.filter((v) => v.user.username.toLowerCase().includes(q)) : visits;
+    }, [visits, search]);
+
     const paginatedVisits = useMemo(() => {
         const start = (currentPage - 1) * ITEMS_PER_PAGE;
-        return visits.slice(start, start + ITEMS_PER_PAGE);
-    }, [visits, currentPage]);
+        return filteredVisits.slice(start, start + ITEMS_PER_PAGE);
+    }, [filteredVisits, currentPage]);
 
-    const totalPages = Math.ceil(visits.length / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(filteredVisits.length / ITEMS_PER_PAGE);
 
     const openScanner = (mode: ScanMode) => {
         clearScan();
@@ -101,10 +107,20 @@ const Visits = () => {
                 <div className="flex items-center gap-4">
                     <h3 className="text-lg font-semibold">Visitor Log</h3>
                     <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                        {visits.length} pengunjung
+                        {filteredVisits.length} pengunjung
                     </span>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Cari siswa..."
+                            value={search}
+                            onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
+                            className="pl-9 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        />
+                    </div>
                     <button
                         onClick={() => openScanner('checkin')}
                         className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer text-sm font-medium transition-colors"
@@ -137,8 +153,8 @@ const Visits = () => {
             {/* Visitor Grid */}
             {loading ? (
                 <p>Loading...</p>
-            ) : visits.length === 0 ? (
-                <EmptyState message="Tidak ada pengunjung pada tanggal ini." />
+            ) : filteredVisits.length === 0 ? (
+                <EmptyState message={search ? 'Siswa tidak ditemukan.' : 'Tidak ada pengunjung pada tanggal ini.'} />
             ) : (
                 <>
                     <div className="overflow-x-auto">
@@ -193,7 +209,7 @@ const Visits = () => {
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={setCurrentPage}
-                        totalItems={visits.length}
+                        totalItems={filteredVisits.length}
                         itemsPerPage={ITEMS_PER_PAGE}
                     />
                 </>

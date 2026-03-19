@@ -1,21 +1,31 @@
 import React, { useMemo, useState } from 'react';
 import { useFines } from '../hooks/useFines';
 import { useExport } from '../hooks/useExport';
-import { DollarSign, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { DollarSign, AlertCircle, CheckCircle, Clock, Search } from 'lucide-react';
 import Pagination from './Pagination';
 
 const AdminFines = () => {
     const { summary, fines, loading, error } = useFines();
     const { downloadExport } = useExport();
+    const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 10;
 
+    const filteredFines = useMemo(() => {
+        const q = search.toLowerCase();
+        if (!q) return fines;
+        return fines.filter((f) =>
+            f.user.username.toLowerCase().includes(q) ||
+            f.bookCopy.book.title.toLowerCase().includes(q)
+        );
+    }, [fines, search]);
+
     const paginatedFines = useMemo(() => {
         const start = (currentPage - 1) * ITEMS_PER_PAGE;
-        return fines.slice(start, start + ITEMS_PER_PAGE);
-    }, [fines, currentPage]);
+        return filteredFines.slice(start, start + ITEMS_PER_PAGE);
+    }, [filteredFines, currentPage]);
 
-    const totalPages = Math.ceil(fines.length / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(filteredFines.length / ITEMS_PER_PAGE);
 
     if (loading) return (
         <div className="p-8 text-center">
@@ -81,8 +91,18 @@ const AdminFines = () => {
 
             {/* Fines Table */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="p-6 border-b border-gray-100">
+                <div className="p-6 border-b border-gray-100 flex items-center justify-between gap-4">
                     <h3 className="font-bold text-gray-800">Rincian Denda Siswa</h3>
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Cari siswa atau judul buku..."
+                            value={search}
+                            onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
+                            className="pl-9 pr-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none w-72"
+                        />
+                    </div>
                 </div>
 
                 <div className="overflow-x-auto">
@@ -128,10 +148,10 @@ const AdminFines = () => {
                                     </td>
                                 </tr>
                             ))}
-                            {fines.length === 0 && (
+                            {filteredFines.length === 0 && (
                                 <tr>
                                     <td colSpan={7} className="p-8 text-center text-gray-500">
-                                        Tidak ada data denda.
+                                        {search ? 'Data tidak ditemukan.' : 'Tidak ada data denda.'}
                                     </td>
                                 </tr>
                             )}

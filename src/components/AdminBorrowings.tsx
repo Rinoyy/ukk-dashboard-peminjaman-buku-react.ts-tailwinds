@@ -5,7 +5,7 @@ import { useExport } from '../hooks/useExport';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
 import type { Borrowing, ReturnCondition } from '../types';
-import { CheckCircle, XCircle, AlertCircle, DollarSign, BookOpen, Download } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, DollarSign, BookOpen, Download, Search } from 'lucide-react';
 
 const todayStr = new Date().toISOString().slice(0, 10);
 
@@ -18,6 +18,7 @@ const AdminBorrowings = () => {
         visits.some((v) => v.userId === userId && v.checkoutDate === null);
 
 
+    const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 10;
 
@@ -159,12 +160,22 @@ const AdminBorrowings = () => {
 
 
 
+    const filteredBorrowings = useMemo(() => {
+        const q = search.toLowerCase();
+        if (!q) return borrowings;
+        return borrowings.filter((b) =>
+            b.user?.username.toLowerCase().includes(q) ||
+            b.bookCopy?.book.title.toLowerCase().includes(q) ||
+            b.status.toLowerCase().includes(q)
+        );
+    }, [borrowings, search]);
+
     const paginatedBorrowings = useMemo(() => {
         const start = (currentPage - 1) * ITEMS_PER_PAGE;
-        return borrowings.slice(start, start + ITEMS_PER_PAGE);
-    }, [borrowings, currentPage]);
+        return filteredBorrowings.slice(start, start + ITEMS_PER_PAGE);
+    }, [filteredBorrowings, currentPage]);
 
-    const totalPages = Math.ceil(borrowings.length / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(filteredBorrowings.length / ITEMS_PER_PAGE);
 
 
 
@@ -199,8 +210,19 @@ const AdminBorrowings = () => {
                 </div>
             </div>
 
-            {borrowings.length === 0 ? (
-                <EmptyState message="Belum ada permintaan peminjaman." />
+            <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                    type="text"
+                    placeholder="Cari siswa, judul buku, atau status..."
+                    value={search}
+                    onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
+                    className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+            </div>
+
+            {filteredBorrowings.length === 0 ? (
+                <EmptyState message={search ? 'Data tidak ditemukan.' : 'Belum ada permintaan peminjaman.'} />
             ) : (
                 <>
                     <div className="overflow-x-auto">
