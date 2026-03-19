@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useBorrow } from '../hooks/useBorrow';
 import { useVisits } from '../hooks/useVisits';
 import { useExport } from '../hooks/useExport';
+import { useAuth } from '../hooks/useAuth';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
 import type { Borrowing, ReturnCondition } from '../types';
@@ -13,6 +14,8 @@ const AdminBorrowings = () => {
     const { borrowings, loading, error, fetchBorrowings, adminApproveBorrow, adminVerifyReturn, markPickedUp, payFine } = useBorrow();
     const { visits, fetchVisits } = useVisits();
     const { downloadExport } = useExport();
+    const { user } = useAuth();
+    const isAdmin = user?.role === 'ADMIN';
 
     const isUserCheckedIn = (userId: number) =>
         visits.some((v) => v.userId === userId && v.checkoutDate === null);
@@ -193,20 +196,24 @@ const AdminBorrowings = () => {
                     Borrowing Management
                 </h2>
                 <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => downloadExport('borrowings')}
-                        className="flex items-center gap-2 px-3 py-1.5 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 cursor-pointer text-sm transition-colors"
-                    >
-                        <Download className="w-4 h-4" />
-                        Peminjaman
-                    </button>
-                    <button
-                        onClick={() => downloadExport('returns')}
-                        className="flex items-center gap-2 px-3 py-1.5 text-green-600 border border-green-600 rounded-lg hover:bg-green-50 cursor-pointer text-sm transition-colors"
-                    >
-                        <Download className="w-4 h-4" />
-                        Pengembalian
-                    </button>
+                    {isAdmin && (
+                        <>
+                            <button
+                                onClick={() => downloadExport('borrowings')}
+                                className="flex items-center gap-2 px-3 py-1.5 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 cursor-pointer text-sm transition-colors"
+                            >
+                                <Download className="w-4 h-4" />
+                                Peminjaman
+                            </button>
+                            <button
+                                onClick={() => downloadExport('returns')}
+                                className="flex items-center gap-2 px-3 py-1.5 text-green-600 border border-green-600 rounded-lg hover:bg-green-50 cursor-pointer text-sm transition-colors"
+                            >
+                                <Download className="w-4 h-4" />
+                                Pengembalian
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
 

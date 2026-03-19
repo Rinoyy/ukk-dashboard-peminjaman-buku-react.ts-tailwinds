@@ -14,20 +14,39 @@ class UserService {
             forceLogout();
             throw new Error('Unauthorized');
         }
-
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.message || 'Gagal mengambil data user');
         }
-
         return response.json();
+    }
+
+    async createStaff(username: string, password: string): Promise<User> {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/users`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
+            body: JSON.stringify({ username, password }),
+        });
+        if (isUnauthorized(response.status)) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal membuat akun petugas');
+        }
+        const data = await response.json();
+        return data.user;
     }
 
     async deleteUser(id: number) {
         if (!id || id <= 0) {
             throw new Error('ID user tidak valid');
         }
-
         const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/users/${id}`, {
             method: 'DELETE',
@@ -36,17 +55,14 @@ class UserService {
                 ...(token && { Authorization: `Bearer ${token}` }),
             },
         });
-
         if (isUnauthorized(response.status)) {
             forceLogout();
             throw new Error('Unauthorized');
         }
-
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.message || 'Gagal menghapus user');
         }
-
         return response.json();
     }
 }

@@ -2,25 +2,36 @@ import { useState } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import DashboardOverview from '../components/DashboardOverview';
 import SiswaList from '../components/SiswaList';
+import PetugasList from '../components/PetugasList';
 import Categories from '../components/Categories';
 import AdminBooks from '../components/AdminBooks';
 import AdminBorrowings from '../components/AdminBorrowings';
 import AdminFines from '../components/AdminFines';
 import Visits from '../components/Visits';
+import { useAuth } from '../hooks/useAuth';
 
 const AdminDashboard = () => {
+    const { user } = useAuth();
+    const isAdmin = user?.role === 'ADMIN';
     const [activeTab, setActiveTab] = useState('dashboard');
 
+    // If PETUGAS tries to access admin-only tab via URL manipulation, redirect to borrowings
+    const safeTab = !isAdmin && ['users', 'petugas', 'categories', 'books'].includes(activeTab)
+        ? 'borrowings'
+        : activeTab;
+
     const renderContent = () => {
-        switch (activeTab) {
+        switch (safeTab) {
             case 'dashboard':
                 return <DashboardOverview />;
             case 'users':
-                return <SiswaList />;
+                return isAdmin ? <SiswaList /> : null;
+            case 'petugas':
+                return isAdmin ? <PetugasList /> : null;
             case 'categories':
-                return <Categories />;
+                return isAdmin ? <Categories /> : null;
             case 'books':
-                return <AdminBooks />;
+                return isAdmin ? <AdminBooks /> : null;
             case 'borrowings':
                 return <AdminBorrowings />;
             case 'returns':
@@ -35,7 +46,7 @@ const AdminDashboard = () => {
     };
 
     return (
-        <DashboardLayout activeTab={activeTab} onTabChange={setActiveTab}>
+        <DashboardLayout activeTab={safeTab} onTabChange={setActiveTab}>
             {renderContent()}
         </DashboardLayout>
     );

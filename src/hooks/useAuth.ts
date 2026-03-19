@@ -29,7 +29,7 @@ export const useAuth = () => {
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
             setUser(data.user);
-            if (data.user.role === 'ADMIN') navigate('/admin');
+            if (data.user.role === 'ADMIN' || data.user.role === 'PETUGAS') navigate('/admin');
             else navigate('/siswa');
             return true;
         } catch (error) {

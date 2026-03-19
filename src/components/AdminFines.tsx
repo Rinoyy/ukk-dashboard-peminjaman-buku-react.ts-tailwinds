@@ -1,12 +1,15 @@
 import React, { useMemo, useState } from 'react';
 import { useFines } from '../hooks/useFines';
 import { useExport } from '../hooks/useExport';
+import { useAuth } from '../hooks/useAuth';
 import { DollarSign, AlertCircle, CheckCircle, Clock, Search } from 'lucide-react';
 import Pagination from './Pagination';
 
 const AdminFines = () => {
     const { summary, fines, loading, error } = useFines();
     const { downloadExport } = useExport();
+    const { user } = useAuth();
+    const isAdmin = user?.role === 'ADMIN';
     const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 10;
@@ -48,12 +51,14 @@ const AdminFines = () => {
                     <DollarSign className="w-8 h-8 text-blue-600" />
                     Rekap Denda
                 </h2>
-                <button
-                    onClick={() => downloadExport('damaged')}
-                    className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors text-sm"
-                >
-                    Export Barang Rusak/Hilang
-                </button>
+                {isAdmin && (
+                    <button
+                        onClick={() => downloadExport('damaged')}
+                        className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors text-sm"
+                    >
+                        Export Barang Rusak/Hilang
+                    </button>
+                )}
             </div>
 
             {/* Summary Cards */}

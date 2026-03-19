@@ -18,6 +18,18 @@ export const useUsers = () => {
         }
     }, []);
 
+    const fetchStaff = useCallback(async () => {
+        setLoading(true);
+        try {
+            const data = await userService.getUsers();
+            setUsers(data.filter(u => u.role === 'PETUGAS'));
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
     const deleteUser = async (id: number): Promise<boolean> => {
         try {
             await userService.deleteUser(id);
@@ -28,9 +40,18 @@ export const useUsers = () => {
         }
     };
 
+    const createStaff = async (username: string, password: string): Promise<boolean> => {
+        try {
+            await userService.createStaff(username, password);
+            return true;
+        } catch (err) {
+            throw err;
+        }
+    };
+
     useEffect(() => {
         fetchUsers();
     }, [fetchUsers]);
 
-    return { users, loading, fetchUsers, deleteUser };
+    return { users, loading, fetchUsers, fetchStaff, deleteUser, createStaff };
 };
