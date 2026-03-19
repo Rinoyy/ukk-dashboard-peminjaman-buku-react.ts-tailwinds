@@ -48,6 +48,17 @@ export const useBorrow = () => {
         }
     };
 
+    const handleMarkPickedUp = async (id: number) => {
+        try {
+            await borrowService.markPickedUp(id);
+            fetchBorrowings();
+            return true;
+        } catch (err: any) {
+            alert(err.message || 'Gagal menandai buku diambil');
+            return false;
+        }
+    };
+
     const handlePayFine = async (id: number, amountPaid: number) => {
         try {
             const result = await borrowService.payFine(id, amountPaid);
@@ -66,6 +77,7 @@ export const useBorrow = () => {
         fetchBorrowings,
         adminApproveBorrow: handleApprove,
         adminVerifyReturn: handleVerifyReturn,
+        markPickedUp: handleMarkPickedUp,
         payFine: handlePayFine
     };
 };

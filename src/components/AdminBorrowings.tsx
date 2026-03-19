@@ -7,7 +7,7 @@ import type { Borrowing } from '../types';
 import { CheckCircle, XCircle, AlertCircle, DollarSign, BookOpen, Download } from 'lucide-react';
 
 const AdminBorrowings = () => {
-    const { borrowings, loading, error, fetchBorrowings, adminApproveBorrow, adminVerifyReturn, payFine } = useBorrow();
+    const { borrowings, loading, error, fetchBorrowings, adminApproveBorrow, adminVerifyReturn, markPickedUp, payFine } = useBorrow();
     const { downloadExport } = useExport();
 
 
@@ -247,7 +247,9 @@ const AdminBorrowings = () => {
                                                                 'bg-red-100 text-red-800'
                                                     }`}
                                             >
-                                                {b.status.replace('_', ' ')}
+                                                {b.status === 'BORROWED' && !b.isPickedUp
+                                                    ? 'BELUM DIAMBIL'
+                                                    : b.status.replace('_', ' ')}
                                             </span>
                                             {b.condition && b.condition !== 'GOOD' && (
                                                 <span className="ml-2 px-2 py-1 text-xs rounded-full bg-red-50 text-red-600 border border-red-200">
@@ -294,6 +296,16 @@ const AdminBorrowings = () => {
                                                             <XCircle className="w-5 h-5" />
                                                         </button>
                                                     </>
+                                                )}
+
+                                                {b.status === 'BORROWED' && !b.isPickedUp && (
+                                                    <button
+                                                        onClick={() => markPickedUp(b.id)}
+                                                        className="px-3 py-1 text-xs bg-indigo-600 text-white rounded hover:bg-indigo-700 font-medium"
+                                                        title="Tandai buku sudah diambil siswa"
+                                                    >
+                                                        Tandai Diambil
+                                                    </button>
                                                 )}
 
                                                 {b.status === 'RETURN_PENDING' && (

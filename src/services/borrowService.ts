@@ -125,6 +125,24 @@ class BorrowService {
         return response.json();
     }
 
+    async markPickedUp(id: number): Promise<Borrowing> {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/borrow/${id}/pickup`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
+        });
+
+        if (isUnauthorized(response.status)) { forceLogout(); throw new Error('Unauthorized'); }
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal menandai buku diambil');
+        }
+        return response.json();
+    }
+
     async getFinesRecap() {
         const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/borrow/fines-recap`, {
