@@ -57,7 +57,6 @@ const SiswaList = () => {
                                 <tr className="bg-gray-100">
                                     <th className="p-3 border-b">ID</th>
                                     <th className="p-3 border-b">Username</th>
-                                    <th className="p-3 border-b">QR Code</th>
                                     <th className="p-3 border-b">Joined At</th>
                                     <th className="p-3 border-b">Actions</th>
                                 </tr>
@@ -67,17 +66,6 @@ const SiswaList = () => {
                                     <tr key={user.id} className="hover:bg-gray-50">
                                         <td className="p-3 border-b">{user.id}</td>
                                         <td className="p-3 border-b font-medium">{user.username}</td>
-                                        <td className="p-3 border-b">
-                                            {user.qrCode && (
-                                                <img
-                                                    src={user.qrCode}
-                                                    alt="QR"
-                                                    className="w-12 h-12 cursor-pointer hover:scale-110 transition-transform"
-                                                    onClick={() => setSelectedUserId(user.id)}
-                                                    title="Click to enlarge"
-                                                />
-                                            )}
-                                        </td>
                                         <td className="p-3 border-b">{new Date(user.createdAt).toLocaleDateString()}</td>
                                         <td className="p-3 border-b space-x-2">
                                             <button

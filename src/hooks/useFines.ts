@@ -1,30 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
 import { borrowService } from '../services/borrowService';
-
-interface FinesSummary {
-    totalPaid: number;
-    totalUnpaid: number;
-    paidCount: number;
-    unpaidCount: number;
-}
-
-interface FineRecord {
-    id: number;
-    user: { username: string };
-    bookCopy: { book: { title: string } };
-    lateFee: number;
-    damageFee: number;
-    totalFine: number;
-    isPaid: boolean;
-    createdAt: string;
-    actualReturnDate: string;
-}
+import type { FinesSummary, FineRecord } from '../types';
 
 export const useFines = () => {
     const [summary, setSummary] = useState<FinesSummary | null>(null);
     const [fines, setFines] = useState<FineRecord[]>([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<any>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const fetchFinesRecap = useCallback(async () => {
         setLoading(true);
@@ -35,7 +17,7 @@ export const useFines = () => {
             setError(null);
         } catch (err) {
             console.error(err);
-            setError(err);
+            setError(err instanceof Error ? err.message : 'Gagal mengambil data denda');
         } finally {
             setLoading(false);
         }

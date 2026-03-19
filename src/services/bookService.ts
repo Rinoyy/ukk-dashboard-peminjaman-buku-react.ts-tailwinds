@@ -1,5 +1,5 @@
 import { API_URL, forceLogout, isUnauthorized } from './api';
-import type { Book, BookCopy } from '../types/index';
+import type { Book, BookCopy, BookCopyStatus } from '../types/index';
 
 class BookService {
     async getBooks(params?: { search?: string; categoryId?: number }): Promise<Book[]> {
@@ -157,7 +157,7 @@ class BookService {
         return response.json();
     }
 
-    async updateCopyStatus(id: number, status: string) {
+    async updateCopyStatus(id: number, status: BookCopyStatus) {
         if (!id || id <= 0) {
             throw new Error('ID copy tidak valid');
         }

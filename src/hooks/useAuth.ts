@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { authService } from '../services/authService';
-import type { User } from '../types/index';
+import type { User, LoginCredentials, RegisterData } from '../types/index';
 import { useNavigate } from 'react-router';
 
 export const useAuth = () => {
@@ -23,7 +23,7 @@ export const useAuth = () => {
         return () => window.removeEventListener('auth:logout', handleForceLogout);
     }, [navigate]);
 
-    const login = async (credentials: any) => {
+    const login = async (credentials: LoginCredentials) => {
         try {
             const data = await authService.login(credentials);
             localStorage.setItem('token', data.token);
@@ -38,7 +38,7 @@ export const useAuth = () => {
         }
     };
 
-    const register = async (userData: any) => {
+    const register = async (userData: RegisterData) => {
         try {
             await authService.register(userData);
             return true;

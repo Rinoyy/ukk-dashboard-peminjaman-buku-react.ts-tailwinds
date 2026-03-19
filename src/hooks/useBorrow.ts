@@ -53,8 +53,8 @@ export const useBorrow = () => {
             await borrowService.markPickedUp(id);
             fetchBorrowings();
             return true;
-        } catch (err: any) {
-            alert(err.message || 'Gagal menandai buku diambil');
+        } catch (err: unknown) {
+            alert(err instanceof Error ? err.message : 'Gagal menandai buku diambil');
             return false;
         }
     };
@@ -64,8 +64,8 @@ export const useBorrow = () => {
             const result = await borrowService.payFine(id, amountPaid);
             fetchBorrowings();
             return result;
-        } catch (err: any) {
-            alert(err.response?.data?.message || 'Failed to process payment');
+        } catch (err: unknown) {
+            alert(err instanceof Error ? err.message : 'Failed to process payment');
             return null;
         }
     };

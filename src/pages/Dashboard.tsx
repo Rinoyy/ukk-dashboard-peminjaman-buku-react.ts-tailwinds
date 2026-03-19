@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import type { User } from '../types';
 
 export default function Dashboard() {
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {

@@ -20,8 +20,8 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     const res = await fetch(`${BASE_URL}${path}`, options);
     handleUnauthorized(res.status);
     if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error((err as any).message || 'Request failed');
+        const err = await res.json().catch(() => ({})) as { message?: string };
+        throw new Error(err.message || 'Request failed');
     }
     return res.json();
 }

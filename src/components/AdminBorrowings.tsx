@@ -3,7 +3,7 @@ import { useBorrow } from '../hooks/useBorrow';
 import { useExport } from '../hooks/useExport';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
-import type { Borrowing } from '../types';
+import type { Borrowing, ReturnCondition } from '../types';
 import { CheckCircle, XCircle, AlertCircle, DollarSign, BookOpen, Download } from 'lucide-react';
 
 const AdminBorrowings = () => {
@@ -353,7 +353,7 @@ const AdminBorrowings = () => {
                             <label className="block text-sm font-medium mb-1">Kondisi Buku</label>
                             <select
                                 value={returnCondition}
-                                onChange={(e) => setReturnCondition(e.target.value as any)}
+                                onChange={(e) => setReturnCondition(e.target.value as ReturnCondition)}
                                 className="w-full p-2 border rounded-lg"
                             >
                                 <option value="GOOD">Baik (Good)</option>
