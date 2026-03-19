@@ -39,11 +39,11 @@ const SiswaList = () => {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => downloadExport('users')}
-                        className="text-sm px-3 py-1 text-blue-600 border border-blue-600 rounded hover:bg-blue-50 transition-colors"
+                        className="text-sm px-3 py-1 text-blue-600 border border-blue-600 rounded hover:bg-blue-50 cursor-pointer transition-colors"
                     >
                         Export CSV
                     </button>
-                    <button onClick={fetchUsers} className="text-sm text-blue-500 hover:underline">Refresh</button>
+                    <button onClick={fetchUsers} className="text-sm text-blue-500 hover:underline cursor-pointer">Refresh</button>
                 </div>
             </div>
 
@@ -70,13 +70,13 @@ const SiswaList = () => {
                                         <td className="p-3 border-b space-x-2">
                                             <button
                                                 onClick={() => setSelectedUserId(user.id)}
-                                                className="px-3 py-1 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-50"
+                                                className="px-3 py-1 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-50 cursor-pointer"
                                             >
                                                 View Profile
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(user.id)}
-                                                className="px-3 py-1 text-sm text-red-600 border border-red-600 rounded hover:bg-red-50"
+                                                className="px-3 py-1 text-sm text-red-600 border border-red-600 rounded hover:bg-red-50 cursor-pointer"
                                             >
                                                 Delete
                                             </button>

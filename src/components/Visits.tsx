@@ -35,7 +35,7 @@ const Visits = () => {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => downloadExport('visits')}
-                        className="px-3 py-2 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-50 transition-colors"
+                        className="px-3 py-2 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-50 cursor-pointer transition-colors"
                     >
                         Export CSV
                     </button>

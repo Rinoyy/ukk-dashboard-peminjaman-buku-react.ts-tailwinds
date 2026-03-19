@@ -62,13 +62,13 @@ const Sidebar = ({ activeTab, onTabChange, collapsed, setCollapsed, mobileOpen, 
                     )}
                     <button
                         onClick={() => setCollapsed(!collapsed)}
-                        className="p-2 rounded hover:bg-gray-700 hidden lg:block"
+                        className="p-2 rounded hover:bg-gray-700 hidden lg:block cursor-pointer"
                     >
                         {collapsed ? '→' : '←'}
                     </button>
                     <button
                         onClick={() => setMobileOpen(false)}
-                        className="p-2 rounded hover:bg-gray-700 lg:hidden"
+                        className="p-2 rounded hover:bg-gray-700 lg:hidden cursor-pointer"
                     >
                         ✕
                     </button>
@@ -95,7 +95,7 @@ const Sidebar = ({ activeTab, onTabChange, collapsed, setCollapsed, mobileOpen, 
                                 <button
                                     key={item.id}
                                     onClick={() => onTabChange(item.id)}
-                                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${activeTab === item.id
+                                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left cursor-pointer transition-colors ${activeTab === item.id
                                         ? 'bg-blue-600 text-white'
                                         : 'text-gray-300 hover:bg-gray-800'
                                         }`}
@@ -117,7 +117,7 @@ const Sidebar = ({ activeTab, onTabChange, collapsed, setCollapsed, mobileOpen, 
                     )}
                     <button
                         onClick={logout}
-                        className={`w-full flex items-center justify-center gap-2 py-2 px-4 bg-red-600 rounded hover:bg-red-700 transition-colors ${collapsed ? 'justify-center' : ''
+                        className={`w-full flex items-center justify-center gap-2 py-2 px-4 bg-red-600 rounded hover:bg-red-700 cursor-pointer transition-colors ${collapsed ? 'justify-center' : ''
                             }`}
                     >
                         <span>🚪</span>

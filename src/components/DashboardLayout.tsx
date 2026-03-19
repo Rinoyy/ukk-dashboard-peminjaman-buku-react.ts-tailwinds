@@ -34,7 +34,7 @@ const DashboardLayout = ({ children, activeTab, onTabChange }: DashboardLayoutPr
                 <header className="sticky top-0 z-30 flex items-center p-4 bg-white shadow-sm lg:hidden">
                     <button
                         onClick={() => setMobileOpen(true)}
-                        className="p-2 mr-3 rounded-md hover:bg-gray-100"
+                        className="p-2 mr-3 rounded-md hover:bg-gray-100 cursor-pointer"
                     >
                         <Menu size={24} />
                     </button>
@@ -71,7 +71,7 @@ const DashboardLayout = ({ children, activeTab, onTabChange }: DashboardLayoutPr
             {/* Overlay for mobile sidebar */}
             {mobileOpen && (
                 <div
-                    className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+                    className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden cursor-pointer"
                     onClick={() => setMobileOpen(false)}
                 />
             )}

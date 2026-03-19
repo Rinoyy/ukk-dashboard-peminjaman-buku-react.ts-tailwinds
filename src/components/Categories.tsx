@@ -67,14 +67,14 @@ const Categories = () => {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => downloadExport('categories')}
-                        className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors"
                     >
                         <Download className="w-4 h-4" />
                         Export CSV
                     </button>
                     <button
                         onClick={openAddModal}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer transition-colors"
                     >
                         <Plus className="w-4 h-4" />
                         Add Category
@@ -110,14 +110,14 @@ const Categories = () => {
                                             <div className="flex items-center justify-end gap-2">
                                                 <button
                                                     onClick={() => handleEdit(cat)}
-                                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors"
                                                     title="Edit"
                                                 >
                                                     <Pencil className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(cat.id)}
-                                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
                                                     title="Delete"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
@@ -147,7 +147,7 @@ const Categories = () => {
                                 <FolderOpen className="w-5 h-5 text-blue-600" />
                                 {editId ? 'Edit Category' : 'Add Category'}
                             </h3>
-                            <button onClick={() => setIsModalOpen(false)} className="p-1 hover:bg-gray-100 rounded-lg">
+                            <button onClick={() => setIsModalOpen(false)} className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer">
                                 <X className="w-5 h-5 text-gray-500" />
                             </button>
                         </div>
@@ -172,10 +172,10 @@ const Categories = () => {
                                 />
                             </div>
                             <div className="flex justify-end gap-2">
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
+                                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer">
                                     Cancel
                                 </button>
-                                <button type="submit" className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+                                <button type="submit" className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer">
                                     {editId ? 'Update' : 'Create'}
                                 </button>
                             </div>

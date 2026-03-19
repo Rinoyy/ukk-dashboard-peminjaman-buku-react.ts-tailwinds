@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useBooks } from '../hooks/useBooks';
 import { useCategories } from '../hooks/useCategories';
 import { useExport } from '../hooks/useExport';
-import type { Book } from '../types/index';
+import type { Book, BookCopyStatus } from '../types/index';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
 import {
@@ -91,8 +91,8 @@ const AdminBooks = () => {
     const handleSaveBook = async (e: React.FormEvent) => {
         e.preventDefault();
         const bookData = {
-            title: currentBookForm.title,
-            author: currentBookForm.author,
+            title: currentBookForm.title ?? '',
+            author: currentBookForm.author ?? '',
             categoryId: currentBookForm.categoryId,
             description: currentBookForm.description,
             stock: currentBookForm.initialStock, // Only used for creation
@@ -191,14 +191,14 @@ const AdminBooks = () => {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => downloadExport('books')}
-                        className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors"
                     >
                         <Download className="w-4 h-4" />
                         Export CSV
                     </button>
                     <button
                         onClick={() => openBookModal()}
-                        className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors"
                     >
                         <Plus className="w-4 h-4" />
                         Add Book
@@ -270,7 +270,7 @@ const AdminBooks = () => {
                                         <td className="p-3 border-b text-center">
                                             <button
                                                 onClick={() => openCopiesModal(book)}
-                                                className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full text-sm transition-colors"
+                                                className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full text-sm cursor-pointer transition-colors"
                                             >
                                                 <Layers className="w-4 h-4" />
                                                 {book.totalCopies} Units
@@ -280,14 +280,14 @@ const AdminBooks = () => {
                                             <div className="flex items-center justify-end gap-2">
                                                 <button
                                                     onClick={() => openBookModal(book)}
-                                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors"
                                                     title="Edit"
                                                 >
                                                     <Pencil className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => confirmDeleteBook(book)}
-                                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
                                                     title="Delete"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
@@ -320,7 +320,7 @@ const AdminBooks = () => {
                                 <BookOpen className="w-5 h-5 text-blue-600" />
                                 {currentBookForm.id ? 'Edit Book' : 'Add Book'}
                             </h3>
-                            <button onClick={() => setIsBookModalOpen(false)} className="p-1 hover:bg-gray-100 rounded-lg">
+                            <button onClick={() => setIsBookModalOpen(false)} className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer">
                                 <X className="w-5 h-5 text-gray-500" />
                             </button>
                         </div>
@@ -339,7 +339,7 @@ const AdminBooks = () => {
                                             <button
                                                 type="button"
                                                 onClick={clearImage}
-                                                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+                                                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 cursor-pointer transition-colors"
                                             >
                                                 <X className="w-3 h-3" />
                                             </button>
@@ -438,8 +438,8 @@ const AdminBooks = () => {
                             )}
 
                             <div className="flex justify-end gap-2 mt-6">
-                                <button type="button" onClick={() => setIsBookModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Cancel</button>
-                                <button type="submit" className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700">Save</button>
+                                <button type="button" onClick={() => setIsBookModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer">Cancel</button>
+                                <button type="submit" className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer">Save</button>
                             </div>
                         </form>
                     </div>
@@ -456,8 +456,8 @@ const AdminBooks = () => {
                         <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Book</h3>
                         <p className="text-gray-500 mb-6">Are you sure? This will delete all {selectedBook.totalCopies} copies associated with it.</p>
                         <div className="flex gap-3 justify-center">
-                            <button onClick={() => setIsDeleteModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Cancel</button>
-                            <button onClick={handleDeleteBook} className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700">Delete</button>
+                            <button onClick={() => setIsDeleteModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer">Cancel</button>
+                            <button onClick={handleDeleteBook} className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 cursor-pointer">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -475,7 +475,7 @@ const AdminBooks = () => {
                                 </h3>
                                 <p className="text-sm text-gray-500">{selectedBook.author}</p>
                             </div>
-                            <button onClick={() => setIsCopiesModalOpen(false)} className="p-1 hover:bg-gray-100 rounded-lg">
+                            <button onClick={() => setIsCopiesModalOpen(false)} className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer">
                                 <X className="w-5 h-5 text-gray-500" />
                             </button>
                         </div>
@@ -484,7 +484,7 @@ const AdminBooks = () => {
                             <span className="text-sm text-gray-600">Total: <b>{selectedBook.totalCopies}</b> copies</span>
                             <button
                                 onClick={openAddCopyModal}
-                                className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+                                className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer text-sm"
                             >
                                 <Plus className="w-4 h-4" />
                                 Add Copy
@@ -528,7 +528,7 @@ const AdminBooks = () => {
                                                 ) : (
                                                     <select
                                                         value={copy.status}
-                                                        onChange={(e) => updateCopyStatus(copy.id, e.target.value)}
+                                                        onChange={(e) => updateCopyStatus(copy.id, e.target.value as BookCopyStatus)}
                                                         className={`px-2 py-1 text-xs rounded-full border cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 ${copy.status === 'AVAILABLE' ? 'bg-green-100 text-green-700 border-green-200' :
                                                             copy.status === 'DAMAGED' ? 'bg-red-100 text-red-700 border-red-200' :
                                                                 'bg-gray-100 text-gray-700 border-gray-200'
@@ -543,7 +543,7 @@ const AdminBooks = () => {
                                             <td className="p-3 text-right">
                                                 <button
                                                     onClick={() => handleDeleteCopy(copy.id)}
-                                                    className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                    className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
                                                     title="Delete Copy"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
@@ -588,13 +588,13 @@ const AdminBooks = () => {
                         <div className="flex gap-3 justify-center">
                             <button
                                 onClick={() => setIsAddCopyModalOpen(false)}
-                                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+                                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer"
                             >
                                 Batal
                             </button>
                             <button
                                 onClick={handleAddCopy}
-                                className="px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 flex items-center gap-2"
+                                className="px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 cursor-pointer flex items-center gap-2"
                             >
                                 <Plus className="w-4 h-4" />
                                 Ya, Tambahkan
@@ -615,7 +615,7 @@ const AdminBooks = () => {
                         <div className="bg-white p-2 border-2 border-dashed border-gray-200 rounded-xl mb-4">
                             <img src={qrPreview.qrCode} alt="Large QR" className="w-full aspect-square object-contain" />
                         </div>
-                        <button onClick={() => setQrPreview(null)} className="w-full py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium">
+                        <button onClick={() => setQrPreview(null)} className="w-full py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 cursor-pointer font-medium">
                             Close
                         </button>
                     </div>

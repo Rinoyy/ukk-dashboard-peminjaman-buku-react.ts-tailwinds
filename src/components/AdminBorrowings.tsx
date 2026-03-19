@@ -176,14 +176,14 @@ const AdminBorrowings = () => {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => downloadExport('borrowings')}
-                        className="flex items-center gap-2 px-3 py-1.5 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 text-sm transition-colors"
+                        className="flex items-center gap-2 px-3 py-1.5 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 cursor-pointer text-sm transition-colors"
                     >
                         <Download className="w-4 h-4" />
                         Peminjaman
                     </button>
                     <button
                         onClick={() => downloadExport('returns')}
-                        className="flex items-center gap-2 px-3 py-1.5 text-green-600 border border-green-600 rounded-lg hover:bg-green-50 text-sm transition-colors"
+                        className="flex items-center gap-2 px-3 py-1.5 text-green-600 border border-green-600 rounded-lg hover:bg-green-50 cursor-pointer text-sm transition-colors"
                     >
                         <Download className="w-4 h-4" />
                         Pengembalian
@@ -283,14 +283,14 @@ const AdminBorrowings = () => {
                                                     <>
                                                         <button
                                                             onClick={() => openApproveModal(b)}
-                                                            className="p-1.5 text-green-600 hover:bg-green-50 rounded"
+                                                            className="p-1.5 text-green-600 hover:bg-green-50 rounded cursor-pointer"
                                                             title="Approve"
                                                         >
                                                             <CheckCircle className="w-5 h-5" />
                                                         </button>
                                                         <button
                                                             onClick={() => openRejectModal(b)}
-                                                            className="p-1.5 text-red-600 hover:bg-red-50 rounded"
+                                                            className="p-1.5 text-red-600 hover:bg-red-50 rounded cursor-pointer"
                                                             title="Reject"
                                                         >
                                                             <XCircle className="w-5 h-5" />
@@ -301,7 +301,7 @@ const AdminBorrowings = () => {
                                                 {b.status === 'BORROWED' && !b.isPickedUp && (
                                                     <button
                                                         onClick={() => markPickedUp(b.id)}
-                                                        className="px-3 py-1 text-xs bg-indigo-600 text-white rounded hover:bg-indigo-700 font-medium"
+                                                        className="px-3 py-1 text-xs bg-indigo-600 text-white rounded hover:bg-indigo-700 cursor-pointer font-medium"
                                                         title="Tandai buku sudah diambil siswa"
                                                     >
                                                         Tandai Diambil
@@ -311,7 +311,7 @@ const AdminBorrowings = () => {
                                                 {b.status === 'RETURN_PENDING' && (
                                                     <button
                                                         onClick={() => openReturnModal(b)}
-                                                        className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 font-medium"
+                                                        className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer font-medium"
                                                     >
                                                         Verify Return
                                                     </button>
@@ -320,7 +320,7 @@ const AdminBorrowings = () => {
                                                 {b.totalFine > 0 && !b.isPaid && (
                                                     <button
                                                         onClick={() => openPaymentModal(b)}
-                                                        className="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 font-medium flex items-center gap-1"
+                                                        className="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer font-medium flex items-center gap-1"
                                                     >
                                                         <DollarSign className="w-3 h-3" />
                                                         Pay Fine
@@ -379,13 +379,13 @@ const AdminBorrowings = () => {
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => setIsReturnModalOpen(false)}
-                                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg cursor-pointer"
                             >
                                 Batal
                             </button>
                             <button
                                 onClick={handleConfirmReturn}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer"
                             >
                                 Proses Pengembalian
                             </button>
@@ -441,14 +441,14 @@ const AdminBorrowings = () => {
                                 <>
                                     <button
                                         onClick={() => setIsPaymentModalOpen(false)}
-                                        className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                                        className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg cursor-pointer"
                                     >
                                         Batal
                                     </button>
                                     <button
                                         onClick={handleProcessPayment}
                                         disabled={(amountPaid === '' ? 0 : amountPaid) < selectedBorrowing.totalFine}
-                                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         Bayar Sekarang
                                     </button>
@@ -489,14 +489,14 @@ const AdminBorrowings = () => {
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => setIsApproveModalOpen(false)}
-                                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg cursor-pointer"
                             >
                                 Batal
                             </button>
                             <button
                                 onClick={handleConfirmApprove}
                                 disabled={approveLoading}
-                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
+                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer disabled:opacity-50 flex items-center gap-2"
                             >
                                 <CheckCircle className="w-4 h-4" />
                                 {approveLoading ? 'Memproses...' : 'Ya, Setujui'}
@@ -539,14 +539,14 @@ const AdminBorrowings = () => {
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => setIsRejectModalOpen(false)}
-                                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg cursor-pointer"
                             >
                                 Batal
                             </button>
                             <button
                                 onClick={handleConfirmReject}
                                 disabled={rejectLoading}
-                                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 flex items-center gap-2"
+                                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 cursor-pointer disabled:opacity-50 flex items-center gap-2"
                             >
                                 <XCircle className="w-4 h-4" />
                                 {rejectLoading ? 'Memproses...' : 'Ya, Tolak'}
