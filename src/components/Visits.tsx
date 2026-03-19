@@ -4,7 +4,7 @@ import { useVisits } from '../hooks/useVisits';
 import { useExport } from '../hooks/useExport';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
-import { QrCode, LogIn, LogOut, X, CheckCircle, XCircle, Loader2, Search } from 'lucide-react';
+import { QrCode, LogIn, LogOut, X, CheckCircle, XCircle, Loader2, Search, User } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 type ScanMode = 'checkin' | 'checkout';
@@ -183,7 +183,7 @@ const Visits = () => {
                                             <td className="p-3 text-gray-400">{(currentPage - 1) * ITEMS_PER_PAGE + idx + 1}</td>
                                             <td className="p-3">
                                                 <div className="flex items-center gap-2">
-                                                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-sm">👤</div>
+                                                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-sm"><User className="w-4 h-4 text-gray-500" /></div>
                                                     <span className="font-medium">{visit.user.username}</span>
                                                 </div>
                                             </td>

@@ -1,3 +1,8 @@
+import {
+    LayoutDashboard, Users, ShieldCheck, FolderOpen, BookMarked,
+    BookUp, BookDown, Banknote, LogIn, LogOut,
+    ChevronLeft, ChevronRight, X, BookOpen, type LucideIcon
+} from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 interface SidebarProps {
@@ -9,62 +14,62 @@ interface SidebarProps {
     setMobileOpen: (v: boolean) => void;
 }
 
-const adminMenuGroups = [
+const adminMenuGroups: { label: string; items: { id: string; label: string; icon: LucideIcon }[] }[] = [
     {
         label: 'MAIN',
         items: [
-            { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+            { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         ],
     },
     {
         label: 'USER MANAGEMENT',
         items: [
-            { id: 'users', label: 'Siswa', icon: '👥' },
-            { id: 'petugas', label: 'Petugas', icon: '🛡️' },
+            { id: 'users', label: 'Siswa', icon: Users },
+            { id: 'petugas', label: 'Petugas', icon: ShieldCheck },
         ],
     },
     {
         label: 'LIBRARY MANAGEMENT',
         items: [
-            { id: 'categories', label: 'Categories', icon: '📁' },
-            { id: 'books', label: 'Books', icon: '📚' },
+            { id: 'categories', label: 'Categories', icon: FolderOpen },
+            { id: 'books', label: 'Books', icon: BookMarked },
         ],
     },
     {
         label: 'TRANSACTIONS',
         items: [
-            { id: 'borrowings', label: 'Peminjaman', icon: '📤' },
-            { id: 'returns', label: 'Pengembalian', icon: '📥' },
-            { id: 'fines', label: 'Denda', icon: '💰' },
+            { id: 'borrowings', label: 'Peminjaman', icon: BookUp },
+            { id: 'returns', label: 'Pengembalian', icon: BookDown },
+            { id: 'fines', label: 'Denda', icon: Banknote },
         ],
     },
     {
         label: 'REPORTS',
         items: [
-            { id: 'visits', label: 'Kunjungan', icon: '🚪' },
+            { id: 'visits', label: 'Kunjungan', icon: LogIn },
         ],
     },
 ];
 
-const petugasMenuGroups = [
+const petugasMenuGroups: { label: string; items: { id: string; label: string; icon: LucideIcon }[] }[] = [
     {
         label: 'MAIN',
         items: [
-            { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+            { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         ],
     },
     {
         label: 'TRANSACTIONS',
         items: [
-            { id: 'borrowings', label: 'Peminjaman', icon: '📤' },
-            { id: 'returns', label: 'Pengembalian', icon: '📥' },
-            { id: 'fines', label: 'Denda', icon: '💰' },
+            { id: 'borrowings', label: 'Peminjaman', icon: BookUp },
+            { id: 'returns', label: 'Pengembalian', icon: BookDown },
+            { id: 'fines', label: 'Denda', icon: Banknote },
         ],
     },
     {
         label: 'REPORTS',
         items: [
-            { id: 'visits', label: 'Kunjungan', icon: '🚪' },
+            { id: 'visits', label: 'Kunjungan', icon: LogIn },
         ],
     },
 ];
@@ -83,19 +88,21 @@ const Sidebar = ({ activeTab, onTabChange, collapsed, setCollapsed, mobileOpen, 
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
                 {!collapsed && (
-                    <h1 className="text-xl font-bold text-blue-400">📖 Library</h1>
+                    <h1 className="text-xl font-bold text-blue-400 flex items-center gap-2">
+                        <BookOpen className="w-5 h-5" /> Library
+                    </h1>
                 )}
                 <button
                     onClick={() => setCollapsed(!collapsed)}
                     className="p-2 rounded hover:bg-gray-700 hidden lg:block cursor-pointer"
                 >
-                    {collapsed ? '→' : '←'}
+                    {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                 </button>
                 <button
                     onClick={() => setMobileOpen(false)}
                     className="p-2 rounded hover:bg-gray-700 lg:hidden cursor-pointer"
                 >
-                    ✕
+                    <X className="w-4 h-4" />
                 </button>
             </div>
 
@@ -136,7 +143,7 @@ const Sidebar = ({ activeTab, onTabChange, collapsed, setCollapsed, mobileOpen, 
                                         : 'text-gray-300 hover:bg-gray-800'
                                 }`}
                             >
-                                <span className="text-lg">{item.icon}</span>
+                                <item.icon className="w-5 h-5 shrink-0" />
                                 {!collapsed && <span className="text-sm">{item.label}</span>}
                             </button>
                         ))}
@@ -157,7 +164,7 @@ const Sidebar = ({ activeTab, onTabChange, collapsed, setCollapsed, mobileOpen, 
                         collapsed ? 'justify-center' : ''
                     }`}
                 >
-                    <span>🚪</span>
+                    <LogOut className="w-4 h-4" />
                     {!collapsed && <span>Logout</span>}
                 </button>
             </div>

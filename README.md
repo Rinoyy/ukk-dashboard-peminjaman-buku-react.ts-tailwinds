@@ -1,59 +1,97 @@
-# Dashboard Perpustakaan Digital 📚
+# Dashboard Perpustakaan Digital
 
-Selamat datang di repositori Dashboard Perpustakaan Digital. Aplikasi ini merupakan pusat kendali (Back-Office) yang digunakan oleh **Admin** dan **Petugas** untuk mengelola seluruh operasional perpustakaan secara efisien.
+Antarmuka web (Back-Office) untuk **Admin** dan **Petugas** mengelola seluruh operasional perpustakaan digital.
 
-## 🚀 Gambaran Umum
-Dashboard ini dirancang untuk memudahkan manajemen buku, peminjaman, hingga monitoring kunjungan anggota. Semua data terintegrasi secara real-time dengan backend untuk memastikan akurasi informasi.
-
-## 🛠 Fitur Utama
-
-### 📖 Manajemen Literasi (Buku & Kategori)
-- **Katalog Buku:** Menambah, mengubah, dan menghapus data buku beserta informasi detail seperti penulis dan deskripsi.
-- **Kategori:** Mengelompokkan buku ke dalam kategori tertentu untuk memudahkan pencarian.
-- **Copy Buku & QR Code:** Setiap buku dapat memiliki beberapa salinan (copies), masing-masing dengan nomor unik dan sistem pelacakan berbasis QR Code.
-
-### 🔄 Sirkulasi (Peminjam & Pengembalian)
-- **Peminjaman:** Melacak status peminjaman siswa mulai dari pengajuan (pending + reservasi copy) hingga status dipinjam.
-- **Pengembalian:** Memproses pengembalian buku dan mencatat kondisi buku (Baik/Rusak/Hilang).
-- **Anti Double-Booking:** Copy buku otomatis direservasi (`RESERVED`) saat pengajuan, mencegah konflik peminjaman.
-
-### 💰 Pengelola Keuangan (Denda)
-- **Kalkulasi Denda:** Sistem secara otomatis menghitung denda jika terjadi keterlambatan pengembalian atau kerusakan buku.
-- **Pembayaran:** Memproses pembayaran denda oleh siswa dan mencatat riwayat transaksi.
-
-### 👥 Manajemen Pengguna
-- **Data Siswa:** Mengelola daftar anggota perpustakaan (Siswa).
-- **Petugas:** Admin memiliki kemampuan untuk menambah akun Petugas baru ke dalam sistem.
-
-### 📊 Monitoring & Statistik
-- **Statistik Cepat:** Melihat ringkasan jumlah buku, peminjaman aktif, dan denda melalui Dashboard Overview.
-- **Log Kunjungan:** Memantau riwayat kunjungan siswa ke perpustakaan.
-
-### 📥 Export Data (CSV)
-Semua data penting dapat didownload dalam format CSV melalui tombol **Export CSV** yang tersedia di setiap halaman:
-- **Buku** — Data buku lengkap dengan status setiap copy
-- **Kategori** — Daftar kategori + jumlah buku per kategori
-- **Peminjaman** — Data peminjaman aktif (Pending/Borrowed/Return Pending)
-- **Pengembalian** — Riwayat pengembalian dengan denda
-- **Pengguna** — Daftar siswa terdaftar
-- **Barang Rusak/Hilang** — Copy buku berstatus DAMAGED/LOST
-- **Kunjungan** — Log kunjungan siswa ke perpustakaan
-
-## 💻 Pengembangan (Development)
-Dashboard ini dibangun menggunakan teknologi modern:
-- **Framework:** React 19 (Vite)
-- **Bahasa:** TypeScript
-- **Styling:** Tailwind CSS
-
-### Cara Menjalankan
-1. Pastikan dependencies sudah terinstal:
-   ```bash
-   npm install
-   ```
-2. Jalankan server pengembangan:
-   ```bash
-   npm run dev
-   ```
+**Port development:** `http://localhost:5173`
 
 ---
-*Dokumentasi ini dibuat untuk memberikan gambaran global mengenai fungsionalitas Dashboard.*
+
+## Teknologi
+
+| Teknologi | Versi | Kegunaan |
+|---|---|---|
+| React | 19 | UI Framework |
+| TypeScript | ~5.x | Type safety |
+| Vite | ~6.x | Build tool |
+| TailwindCSS | ~3.x | Styling |
+| React Router | v7 | Routing |
+| Fetch API | native | HTTP client |
+
+---
+
+## Status Peminjaman & BookCopy
+
+| BorrowStatus | Keterangan |
+|---|---|
+| `PENDING` | Menunggu approve/reject admin |
+| `BORROWED` | Disetujui, sedang dipinjam |
+| `RETURN_PENDING` | Siswa minta kembali, tunggu verifikasi |
+| `RETURNED` | Selesai |
+| `REJECTED` | Ditolak |
+| `CANCELLED` | Dibatalkan / auto-cancel |
+
+| CopyStatus | Keterangan |
+|---|---|
+| `AVAILABLE` | Tersedia |
+| `RESERVED` | Diblok (ada PENDING) |
+| `BORROWED` | Sedang dipinjam |
+| `DAMAGED` | Rusak |
+| `LOST` | Hilang |
+
+---
+
+## Fitur Utama
+
+### Manajemen Literasi (Buku & Kategori)
+- CRUD buku + upload cover image
+- Setiap buku memiliki beberapa **salinan fisik (BookCopy)** dengan QR Code unik
+- Pantau status tiap copy: AVAILABLE / RESERVED / BORROWED / DAMAGED / LOST
+- Tambah copy baru ke buku yang sudah ada
+
+### Sirkulasi Peminjaman
+- Lihat daftar PENDING → Approve atau Reject dengan alasan
+- Tandai buku sudah diambil siswa (isPickedUp)
+- Copy otomatis di-RESERVED saat ada permintaan, mencegah double-booking
+- Auto-cancel PENDING > 24 jam (via cron job backend)
+
+### Verifikasi Pengembalian
+- Lihat daftar RETURN_PENDING
+- Verifikasi kondisi: GOOD / DAMAGED / LOST
+- Denda keterlambatan dihitung otomatis (Rp 1.000/hari)
+- Denda kerusakan/hilang diinput manual
+
+### Manajemen Denda
+- Rekap total denda lunas vs belum lunas
+- Proses pembayaran tunai + hitung kembalian
+
+### Manajemen Pengguna
+- Daftar siswa terdaftar
+- Tambah akun Petugas (hanya Admin)
+
+### Monitoring
+- Statistik dashboard: buku, peminjaman aktif, denda, kunjungan hari ini
+- Log kunjungan siswa via scan QR + filter per tanggal
+
+### Export Data (CSV)
+Tersedia di setiap halaman:
+- Buku, Kategori, Peminjaman Aktif, Pengembalian, Pengguna, Buku Rusak/Hilang, Kunjungan
+
+---
+
+## Menjalankan
+
+```bash
+npm install
+npm run dev
+```
+
+Pastikan backend (`express-qr-backend`) sudah berjalan di port 3000.
+
+---
+
+## Dokumentasi Lengkap
+
+| File | Isi |
+|---|---|
+| [docs/business-flow.md](./docs/business-flow.md) | Alur bisnis per modul |
+| [docs/technical-flow.md](./docs/technical-flow.md) | Detail teknis, routing, types |

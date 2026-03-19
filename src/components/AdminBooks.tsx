@@ -249,8 +249,8 @@ const AdminBooks = () => {
                                                     className="w-12 h-16 object-cover rounded shadow-sm"
                                                 />
                                             ) : (
-                                                <div className="w-12 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded flex items-center justify-center text-xl shadow-sm">
-                                                    📖
+                                                <div className="w-12 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded flex items-center justify-center shadow-sm">
+                                                    <BookOpen className="w-6 h-6 text-blue-400" />
                                                 </div>
                                             )}
                                         </td>

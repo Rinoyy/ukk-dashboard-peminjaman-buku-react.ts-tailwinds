@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { userService } from '../services/userService';
 import type { User } from '../types/index';
+import { User as UserIcon } from 'lucide-react';
 
 interface UserProfileProps {
     userId?: number;
@@ -46,8 +47,8 @@ const UserProfile = ({ userId, onClose }: UserProfileProps) => {
                 </div>
 
                 <div className="text-center mb-6">
-                    <div className="w-20 h-20 mx-auto bg-blue-100 rounded-full flex items-center justify-center text-4xl mb-4">
-                        👤
+                    <div className="w-20 h-20 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <UserIcon className="w-10 h-10 text-blue-400" />
                     </div>
                     <h3 className="text-xl font-bold text-gray-800">{user.username}</h3>
                     <span className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-medium ${user.role === 'ADMIN' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'

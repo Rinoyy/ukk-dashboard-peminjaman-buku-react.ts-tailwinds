@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useVisits } from '../hooks/useVisits';
+import { LogIn, BookMarked, BookUp, Clock, type LucideIcon } from 'lucide-react';
 
 const DashboardOverview = () => {
     const { todayCount, fetchTodayCount } = useVisits();
@@ -8,11 +9,11 @@ const DashboardOverview = () => {
         fetchTodayCount();
     }, [fetchTodayCount]);
 
-    const stats = [
-        { label: "Pengunjung Hari Ini", value: todayCount, icon: "🚪", color: "bg-blue-500" },
-        { label: "Total Buku", value: "-", icon: "📚", color: "bg-green-500" },
-        { label: "Peminjaman Aktif", value: "-", icon: "📤", color: "bg-yellow-500" },
-        { label: "Menunggu Approval", value: "-", icon: "⏳", color: "bg-purple-500" },
+    const stats: { label: string; value: string | number; icon: LucideIcon; color: string }[] = [
+        { label: "Pengunjung Hari Ini", value: todayCount, icon: LogIn,      color: "bg-blue-500" },
+        { label: "Total Buku",          value: "-",        icon: BookMarked, color: "bg-green-500" },
+        { label: "Peminjaman Aktif",    value: "-",        icon: BookUp,     color: "bg-yellow-500" },
+        { label: "Menunggu Approval",   value: "-",        icon: Clock,      color: "bg-purple-500" },
     ];
 
     return (
@@ -25,7 +26,7 @@ const DashboardOverview = () => {
                                 <p className="text-sm opacity-80">{stat.label}</p>
                                 <p className="text-3xl font-bold mt-1">{stat.value}</p>
                             </div>
-                            <span className="text-4xl opacity-80">{stat.icon}</span>
+                            <stat.icon className="w-10 h-10 opacity-80" />
                         </div>
                     </div>
                 ))}
