@@ -4,6 +4,7 @@ export interface Visit {
     id: number;
     userId: number;
     visitDate: string;
+    checkoutDate: string | null;
     user: {
         id: number;
         username: string;
@@ -80,6 +81,34 @@ class VisitService {
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.message || 'Gagal check-in');
+        }
+
+        return response.json();
+    }
+
+    async checkOut(userId: number) {
+        if (!userId || userId <= 0) {
+            throw new Error('ID user tidak valid');
+        }
+
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/visits/checkout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
+            body: JSON.stringify({ userId }),
+        });
+
+        if (isUnauthorized(response.status)) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal check-out');
         }
 
         return response.json();

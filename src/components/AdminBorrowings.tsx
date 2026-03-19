@@ -1,14 +1,21 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useBorrow } from '../hooks/useBorrow';
+import { useVisits } from '../hooks/useVisits';
 import { useExport } from '../hooks/useExport';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
 import type { Borrowing, ReturnCondition } from '../types';
 import { CheckCircle, XCircle, AlertCircle, DollarSign, BookOpen, Download } from 'lucide-react';
 
+const todayStr = new Date().toISOString().slice(0, 10);
+
 const AdminBorrowings = () => {
     const { borrowings, loading, error, fetchBorrowings, adminApproveBorrow, adminVerifyReturn, markPickedUp, payFine } = useBorrow();
+    const { visits, fetchVisits } = useVisits();
     const { downloadExport } = useExport();
+
+    const isUserCheckedIn = (userId: number) =>
+        visits.some((v) => v.userId === userId && v.checkoutDate === null);
 
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -147,7 +154,8 @@ const AdminBorrowings = () => {
 
     useEffect(() => {
         fetchBorrowings();
-    }, [fetchBorrowings]);
+        fetchVisits(todayStr);
+    }, [fetchBorrowings, fetchVisits]);
 
 
 
@@ -301,8 +309,9 @@ const AdminBorrowings = () => {
                                                 {b.status === 'BORROWED' && !b.isPickedUp && (
                                                     <button
                                                         onClick={() => markPickedUp(b.id)}
-                                                        className="px-3 py-1 text-xs bg-indigo-600 text-white rounded hover:bg-indigo-700 cursor-pointer font-medium"
-                                                        title="Tandai buku sudah diambil siswa"
+                                                        disabled={!isUserCheckedIn(b.userId)}
+                                                        className="px-3 py-1 text-xs bg-indigo-600 text-white rounded hover:bg-indigo-700 cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        title={!isUserCheckedIn(b.userId) ? 'Siswa belum check-in hari ini' : 'Tandai buku sudah diambil siswa'}
                                                     >
                                                         Tandai Diambil
                                                     </button>
@@ -311,7 +320,9 @@ const AdminBorrowings = () => {
                                                 {b.status === 'RETURN_PENDING' && (
                                                     <button
                                                         onClick={() => openReturnModal(b)}
-                                                        className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer font-medium"
+                                                        disabled={!isUserCheckedIn(b.userId)}
+                                                        className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        title={!isUserCheckedIn(b.userId) ? 'Siswa belum check-in hari ini' : 'Verifikasi pengembalian buku'}
                                                     >
                                                         Verify Return
                                                     </button>

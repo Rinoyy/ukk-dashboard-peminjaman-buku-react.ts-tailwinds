@@ -166,7 +166,7 @@ class BookService {
         }
 
         const token = localStorage.getItem('token');
-        const response = await fetch(`${API_URL}/copies/${id}/status`, {
+        const response = await fetch(`${API_URL}/book-copies/${id}/status`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -194,7 +194,7 @@ class BookService {
         }
 
         const token = localStorage.getItem('token');
-        const response = await fetch(`${API_URL}/copies/${bookId}`, {
+        const response = await fetch(`${API_URL}/book-copies/${bookId}`, {
             headers: {
                 'Content-Type': 'application/json',
                 ...(token && { Authorization: `Bearer ${token}` }),
@@ -220,7 +220,7 @@ class BookService {
         }
 
         const token = localStorage.getItem('token');
-        const response = await fetch(`${API_URL}/copies`, {
+        const response = await fetch(`${API_URL}/book-copies`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -248,7 +248,7 @@ class BookService {
         }
 
         const token = localStorage.getItem('token');
-        const response = await fetch(`${API_URL}/copies/${copyId}`, {
+        const response = await fetch(`${API_URL}/book-copies/${copyId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
