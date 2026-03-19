@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import Sidebar from './Sidebar';
+import ActivityLogDropdown from './ActivityLogDropdown';
 import { Menu } from 'lucide-react';
 
 interface DashboardLayoutProps {
@@ -31,25 +32,28 @@ const DashboardLayout = ({ children, activeTab, onTabChange }: DashboardLayoutPr
             <main className={`flex-1 transition-all duration-300 min-w-0 ${collapsed ? 'lg:ml-16' : 'lg:ml-64'
                 } ml-0`}>
                 {/* Mobile Header with Hamburger */}
-                <header className="sticky top-0 z-30 flex items-center p-4 bg-white shadow-sm lg:hidden">
-                    <button
-                        onClick={() => setMobileOpen(true)}
-                        className="p-2 mr-3 rounded-md hover:bg-gray-100 cursor-pointer"
-                    >
-                        <Menu size={24} />
-                    </button>
-                    <h2 className="text-xl font-bold text-gray-800 capitalize truncate">
-                        {activeTab === 'borrowings' ? 'Peminjaman' :
-                            activeTab === 'returns' ? 'Pengembalian' :
-                                activeTab === 'fines' ? 'Denda' :
-                                    activeTab === 'visits' ? 'Kunjungan' :
-                                        activeTab}
-                    </h2>
+                <header className="sticky top-0 z-30 flex items-center justify-between p-4 bg-white shadow-sm lg:hidden">
+                    <div className="flex items-center">
+                        <button
+                            onClick={() => setMobileOpen(true)}
+                            className="p-2 mr-3 rounded-md hover:bg-gray-100 cursor-pointer"
+                        >
+                            <Menu size={24} />
+                        </button>
+                        <h2 className="text-xl font-bold text-gray-800 capitalize truncate">
+                            {activeTab === 'borrowings' ? 'Peminjaman' :
+                                activeTab === 'returns' ? 'Pengembalian' :
+                                    activeTab === 'fines' ? 'Denda' :
+                                        activeTab === 'visits' ? 'Kunjungan' :
+                                            activeTab}
+                        </h2>
+                    </div>
+                    <ActivityLogDropdown />
                 </header>
 
                 {/* Desktop Header (Hidden on Mobile) */}
                 <header className="hidden lg:block mb-6 pt-6 px-6">
-                    <div className="p-4 bg-white rounded-lg shadow-sm">
+                    <div className="p-4 bg-white rounded-lg shadow-sm flex items-center justify-between">
                         <h2 className="text-2xl font-bold text-gray-800 capitalize">
                             {activeTab === 'borrowings' ? 'Peminjaman' :
                                 activeTab === 'returns' ? 'Pengembalian' :
@@ -57,6 +61,7 @@ const DashboardLayout = ({ children, activeTab, onTabChange }: DashboardLayoutPr
                                         activeTab === 'visits' ? 'Kunjungan Hari Ini' :
                                             activeTab}
                         </h2>
+                        <ActivityLogDropdown />
                     </div>
                 </header>
 
