@@ -33,10 +33,10 @@ const DashboardOverview = () => {
             </div>
 
             <div className="bg-gray-50 rounded-xl p-6">
-                <h3 className="text-lg font-semibold mb-4">Welcome to Library Admin Dashboard</h3>
+                <h3 className="text-lg font-semibold mb-4">Selamat Datang di Dashboard Admin Perpustakaan</h3>
                 <p className="text-gray-600">
-                    Use the sidebar to navigate between different sections. You can manage books,
-                    categories, users, and track library visits.
+                    Gunakan sidebar untuk berpindah antar bagian. Anda dapat mengelola buku,
+                    kategori, pengguna, dan memantau kunjungan perpustakaan.
                 </p>
             </div>
         </div>

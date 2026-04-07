@@ -108,7 +108,7 @@ const Visits = () => {
             {/* Header */}
             <div className="flex flex-wrap justify-between items-center mb-6 gap-3">
                 <div className="flex items-center gap-4">
-                    <h3 className="text-lg font-semibold">Visitor Log</h3>
+                    <h3 className="text-lg font-semibold">Log Pengunjung</h3>
                     <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
                         {filteredVisits.length} pengunjung
                     </span>
@@ -129,21 +129,21 @@ const Visits = () => {
                         className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer text-sm font-medium transition-colors"
                     >
                         <LogIn className="w-4 h-4" />
-                        Scan Check-in
+                        Scan Masuk
                     </button>
                     <button
                         onClick={() => openScanner('checkout')}
                         className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 cursor-pointer text-sm font-medium transition-colors"
                     >
                         <LogOut className="w-4 h-4" />
-                        Scan Check-out
+                        Scan Keluar
                     </button>
                     {isAdmin && (
                         <button
                             onClick={() => downloadExport('visits')}
                             className="px-3 py-2 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-50 cursor-pointer transition-colors"
                         >
-                            Export CSV
+                            Ekspor CSV
                         </button>
                     )}
                     <input
@@ -157,7 +157,7 @@ const Visits = () => {
 
             {/* Visitor Grid */}
             {loading ? (
-                <p>Loading...</p>
+                <p>Memuat...</p>
             ) : filteredVisits.length === 0 ? (
                 <EmptyState message={search ? 'Siswa tidak ditemukan.' : 'Tidak ada pengunjung pada tanggal ini.'} />
             ) : (
@@ -168,8 +168,8 @@ const Visits = () => {
                                 <tr className="bg-gray-100">
                                     <th className="p-3 border-b">#</th>
                                     <th className="p-3 border-b">Siswa</th>
-                                    <th className="p-3 border-b">Check-in</th>
-                                    <th className="p-3 border-b">Check-out</th>
+                                    <th className="p-3 border-b">Masuk</th>
+                                    <th className="p-3 border-b">Keluar</th>
                                     <th className="p-3 border-b">Durasi</th>
                                     <th className="p-3 border-b text-center">Status</th>
                                 </tr>
@@ -228,8 +228,8 @@ const Visits = () => {
                         <div className={`flex items-center justify-between px-5 py-4 ${scanMode === 'checkin' ? 'bg-green-600' : 'bg-orange-500'}`}>
                             <div className="flex items-center gap-2 text-white">
                                 {scanMode === 'checkin'
-                                    ? <><LogIn className="w-5 h-5" /><span className="font-bold text-lg">Scan Check-in</span></>
-                                    : <><LogOut className="w-5 h-5" /><span className="font-bold text-lg">Scan Check-out</span></>
+                                    ? <><LogIn className="w-5 h-5" /><span className="font-bold text-lg">Scan Masuk</span></>
+                                    : <><LogOut className="w-5 h-5" /><span className="font-bold text-lg">Scan Keluar</span></>
                                 }
                             </div>
                             <button onClick={closeScanner} className="text-white/80 hover:text-white cursor-pointer">
@@ -293,13 +293,13 @@ const Visits = () => {
                                 onClick={() => { clearScan(); setScanMode('checkin'); }}
                                 className={`flex-1 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${scanMode === 'checkin' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                             >
-                                Check-in
+                                Masuk
                             </button>
                             <button
                                 onClick={() => { clearScan(); setScanMode('checkout'); }}
                                 className={`flex-1 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${scanMode === 'checkout' ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                             >
-                                Check-out
+                                Keluar
                             </button>
                         </div>
                     </div>

@@ -34,7 +34,7 @@ const Categories = () => {
             setIsModalOpen(false);
             setEditId(null);
         } else {
-            alert('Failed to save category');
+            alert('Gagal menyimpan kategori');
         }
     };
 
@@ -51,9 +51,9 @@ const Categories = () => {
     };
 
     const handleDelete = async (id: number) => {
-        if (confirm('Delete this category?')) {
+        if (confirm('Hapus kategori ini?')) {
             const success = await removeCategory(id);
-            if (!success) alert('Failed to delete. Category might have books.');
+            if (!success) alert('Gagal menghapus. Kategori mungkin masih memiliki buku.');
         }
     };
 
@@ -62,7 +62,7 @@ const Categories = () => {
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold flex items-center gap-2">
                     <FolderOpen className="w-6 h-6 text-blue-600" />
-                    Book Categories
+                    Kategori Buku
                 </h2>
                 <div className="flex items-center gap-2">
                     <button
@@ -70,22 +70,22 @@ const Categories = () => {
                         className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors"
                     >
                         <Download className="w-4 h-4" />
-                        Export CSV
+                        Ekspor CSV
                     </button>
                     <button
                         onClick={openAddModal}
                         className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer transition-colors"
                     >
                         <Plus className="w-4 h-4" />
-                        Add Category
+                        Tambah Kategori
                     </button>
                 </div>
             </div>
 
             {loading ? (
-                <p>Loading...</p>
+                <p>Memuat...</p>
             ) : categories.length === 0 ? (
-                <EmptyState message="Belum ada kategori. Klik 'Add Category' untuk menambahkan." />
+                <EmptyState message="Belum ada kategori. Klik 'Tambah Kategori' untuk menambahkan." />
             ) : (
                 <>
                     <div className="overflow-x-auto">
@@ -93,10 +93,10 @@ const Categories = () => {
                             <thead>
                                 <tr className="bg-gray-100">
                                     <th className="p-3 border-b">ID</th>
-                                    <th className="p-3 border-b">Name</th>
-                                    <th className="p-3 border-b">Description</th>
-                                    <th className="p-3 border-b">Books</th>
-                                    <th className="p-3 border-b text-right">Actions</th>
+                                    <th className="p-3 border-b">Nama</th>
+                                    <th className="p-3 border-b">Deskripsi</th>
+                                    <th className="p-3 border-b">Buku</th>
+                                    <th className="p-3 border-b text-right">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -118,7 +118,7 @@ const Categories = () => {
                                                 <button
                                                     onClick={() => handleDelete(cat.id)}
                                                     className="p-2 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
-                                                    title="Delete"
+                                                    title="Hapus"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -145,7 +145,7 @@ const Categories = () => {
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-xl font-bold flex items-center gap-2">
                                 <FolderOpen className="w-5 h-5 text-blue-600" />
-                                {editId ? 'Edit Category' : 'Add Category'}
+                                {editId ? 'Edit Kategori' : 'Tambah Kategori'}
                             </h3>
                             <button onClick={() => setIsModalOpen(false)} className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer">
                                 <X className="w-5 h-5 text-gray-500" />
@@ -153,7 +153,7 @@ const Categories = () => {
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="block text-sm font-medium mb-1">Name</label>
+                                <label className="block text-sm font-medium mb-1">Nama</label>
                                 <input
                                     type="text"
                                     value={formData.name}
@@ -163,20 +163,20 @@ const Categories = () => {
                                 />
                             </div>
                             <div className="mb-4">
-                                <label className="block text-sm font-medium mb-1">Description</label>
+                                <label className="block text-sm font-medium mb-1">Deskripsi</label>
                                 <textarea
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 h-24"
-                                    placeholder="Enter category description..."
+                                    placeholder="Masukkan deskripsi kategori..."
                                 />
                             </div>
                             <div className="flex justify-end gap-2">
                                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer">
-                                    Cancel
+                                    Batal
                                 </button>
                                 <button type="submit" className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer">
-                                    {editId ? 'Update' : 'Create'}
+                                    {editId ? 'Perbarui' : 'Buat'}
                                 </button>
                             </div>
                         </form>

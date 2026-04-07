@@ -31,14 +31,14 @@ const UserProfile = ({ userId, onClose }: UserProfileProps) => {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (!user) return <p>User not found</p>;
+    if (loading) return <p>Memuat...</p>;
+    if (!user) return <p>Pengguna tidak ditemukan</p>;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-8">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50" onClick={onClose}>
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-8" onClick={e => e.stopPropagation()}>
                 <div className="flex justify-between items-start mb-6">
-                    <h2 className="text-2xl font-bold text-gray-800">User Profile</h2>
+                    <h2 className="text-2xl font-bold text-gray-800">Profil Pengguna</h2>
                     {onClose && (
                         <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-2xl cursor-pointer">
                             &times;
@@ -51,13 +51,11 @@ const UserProfile = ({ userId, onClose }: UserProfileProps) => {
                         <UserIcon className="w-10 h-10 text-blue-400" />
                     </div>
                     <h3 className="text-xl font-bold text-gray-800">{user.username}</h3>
-                    <span className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-medium ${user.role === 'ADMIN' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'
-                        }`}>
+                    <span className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-medium ${user.role === 'ADMIN' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}`}>
                         {user.role}
                     </span>
                 </div>
 
-                {/* Large QR Code Display */}
                 {user.qrCode && (
                     <div className="bg-gray-50 rounded-xl p-6 text-center">
                         <p className="text-sm text-gray-600 mb-4">QR Code untuk Check-in</p>
@@ -73,7 +71,7 @@ const UserProfile = ({ userId, onClose }: UserProfileProps) => {
                 )}
 
                 <div className="mt-6 text-center text-sm text-gray-500">
-                    Member since: {new Date(user.createdAt).toLocaleDateString('id-ID')}
+                    Bergabung sejak: {new Date(user.createdAt).toLocaleDateString('id-ID')}
                 </div>
             </div>
         </div>

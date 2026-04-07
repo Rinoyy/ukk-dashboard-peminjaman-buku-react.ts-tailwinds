@@ -27,13 +27,13 @@ const SiswaList = () => {
     const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
 
     const handleDelete = async (id: number) => {
-        if (confirm('Are you sure you want to delete this Siswa?')) {
+        if (confirm('Yakin ingin menghapus siswa ini?')) {
             const success = await deleteUser(id);
-            if (!success) alert('Failed to delete user');
+            if (!success) alert('Gagal menghapus pengguna');
         }
     };
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <p>Memuat...</p>;
 
     return (
         <div>
@@ -42,7 +42,7 @@ const SiswaList = () => {
             )}
 
             <div className="flex justify-between mb-4">
-                <h2 className="text-xl font-bold">Registered Siswa</h2>
+                <h2 className="text-xl font-bold">Daftar Siswa Terdaftar</h2>
                 <div className="flex items-center gap-2">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -58,9 +58,9 @@ const SiswaList = () => {
                         onClick={() => downloadExport('users')}
                         className="text-sm px-3 py-1 text-blue-600 border border-blue-600 rounded hover:bg-blue-50 cursor-pointer transition-colors"
                     >
-                        Export CSV
+                        Ekspor CSV
                     </button>
-                    <button onClick={fetchUsers} className="text-sm text-blue-500 hover:underline cursor-pointer">Refresh</button>
+                    <button onClick={fetchUsers} className="text-sm text-blue-500 hover:underline cursor-pointer">Perbarui</button>
                 </div>
             </div>
 
@@ -74,8 +74,8 @@ const SiswaList = () => {
                                 <tr className="bg-gray-100">
                                     <th className="p-3 border-b">ID</th>
                                     <th className="p-3 border-b">Username</th>
-                                    <th className="p-3 border-b">Joined At</th>
-                                    <th className="p-3 border-b">Actions</th>
+                                    <th className="p-3 border-b">Tanggal Daftar</th>
+                                    <th className="p-3 border-b">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -89,13 +89,13 @@ const SiswaList = () => {
                                                 onClick={() => setSelectedUserId(user.id)}
                                                 className="px-3 py-1 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-50 cursor-pointer"
                                             >
-                                                View Profile
+                                                Lihat Profil
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(user.id)}
                                                 className="px-3 py-1 text-sm text-red-600 border border-red-600 rounded hover:bg-red-50 cursor-pointer"
                                             >
-                                                Delete
+                                                Hapus
                                             </button>
                                         </td>
                                     </tr>

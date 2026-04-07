@@ -11,7 +11,7 @@ const Login = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const success = await login({ username, password });
-        if (!success) setError('Invalid credentials or unauthorized');
+        if (!success) setError('Kredensial tidak valid atau tidak memiliki akses');
     };
 
     return (
@@ -21,7 +21,7 @@ const Login = () => {
                     <div className="w-16 h-16 mx-auto bg-blue-50 rounded-2xl flex items-center justify-center mb-4">
                         <BookOpen className="w-8 h-8 text-blue-600" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-800">Admin Login</h2>
+                    <h2 className="text-2xl font-bold text-gray-800">Login Admin</h2>
                     <p className="text-gray-500 text-sm mt-1">Masuk ke dashboard perpustakaan</p>
                 </div>
 
@@ -59,7 +59,7 @@ const Login = () => {
                         className="w-full py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-sm"
                     >
                         <LogIn className="w-4 h-4" />
-                        Sign In
+                        Masuk
                     </button>
                 </form>
             </div>

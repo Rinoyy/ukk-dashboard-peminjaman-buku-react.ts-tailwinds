@@ -16,27 +16,27 @@ interface SidebarProps {
 
 const adminMenuGroups: { label: string; items: { id: string; label: string; icon: LucideIcon }[] }[] = [
     {
-        label: 'MAIN',
+        label: 'UTAMA',
         items: [
             { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         ],
     },
     {
-        label: 'USER MANAGEMENT',
+        label: 'MANAJEMEN PENGGUNA',
         items: [
             { id: 'users', label: 'Siswa', icon: Users },
             { id: 'petugas', label: 'Petugas', icon: ShieldCheck },
         ],
     },
     {
-        label: 'LIBRARY MANAGEMENT',
+        label: 'MANAJEMEN PERPUSTAKAAN',
         items: [
-            { id: 'categories', label: 'Categories', icon: FolderOpen },
-            { id: 'books', label: 'Books', icon: BookMarked },
+            { id: 'categories', label: 'Kategori', icon: FolderOpen },
+            { id: 'books', label: 'Buku', icon: BookMarked },
         ],
     },
     {
-        label: 'TRANSACTIONS',
+        label: 'TRANSAKSI',
         items: [
             { id: 'borrowings', label: 'Peminjaman', icon: BookUp },
             { id: 'returns', label: 'Pengembalian', icon: BookDown },
@@ -44,7 +44,7 @@ const adminMenuGroups: { label: string; items: { id: string; label: string; icon
         ],
     },
     {
-        label: 'REPORTS',
+        label: 'LAPORAN',
         items: [
             { id: 'visits', label: 'Kunjungan', icon: LogIn },
         ],
@@ -53,13 +53,13 @@ const adminMenuGroups: { label: string; items: { id: string; label: string; icon
 
 const petugasMenuGroups: { label: string; items: { id: string; label: string; icon: LucideIcon }[] }[] = [
     {
-        label: 'MAIN',
+        label: 'UTAMA',
         items: [
             { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         ],
     },
     {
-        label: 'TRANSACTIONS',
+        label: 'TRANSAKSI',
         items: [
             { id: 'borrowings', label: 'Peminjaman', icon: BookUp },
             { id: 'returns', label: 'Pengembalian', icon: BookDown },
@@ -67,7 +67,7 @@ const petugasMenuGroups: { label: string; items: { id: string; label: string; ic
         ],
     },
     {
-        label: 'REPORTS',
+        label: 'LAPORAN',
         items: [
             { id: 'visits', label: 'Kunjungan', icon: LogIn },
         ],
@@ -155,7 +155,7 @@ const Sidebar = ({ activeTab, onTabChange, collapsed, setCollapsed, mobileOpen, 
             <div className="p-4 border-t border-gray-700">
                 {!collapsed && (
                     <div className="mb-2 text-sm text-gray-400">
-                        Logged in as: <span className="text-white font-medium">{user?.username}</span>
+                        Masuk sebagai: <span className="text-white font-medium">{user?.username}</span>
                     </div>
                 )}
                 <button
@@ -165,7 +165,7 @@ const Sidebar = ({ activeTab, onTabChange, collapsed, setCollapsed, mobileOpen, 
                     }`}
                 >
                     <LogOut className="w-4 h-4" />
-                    {!collapsed && <span>Logout</span>}
+                    {!collapsed && <span>Keluar</span>}
                 </button>
             </div>
         </aside>

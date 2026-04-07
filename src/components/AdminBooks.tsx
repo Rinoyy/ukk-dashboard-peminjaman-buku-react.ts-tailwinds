@@ -164,7 +164,7 @@ const AdminBooks = () => {
     };
 
     const handleDeleteCopy = async (copyId: number) => {
-        if (selectedBook && window.confirm('Are you sure you want to delete this copy?')) {
+        if (selectedBook && window.confirm('Yakin ingin menghapus eksemplar ini?')) {
             await deleteCopy(copyId);
             fetchBooks({ search });
         }
@@ -186,7 +186,7 @@ const AdminBooks = () => {
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold flex items-center gap-2">
                     <BookOpen className="w-6 h-6 text-blue-600" />
-                    Manage Books
+                    Kelola Buku
                 </h2>
                 <div className="flex items-center gap-2">
                     <button
@@ -194,14 +194,14 @@ const AdminBooks = () => {
                         className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors"
                     >
                         <Download className="w-4 h-4" />
-                        Export CSV
+                        Ekspor CSV
                     </button>
                     <button
                         onClick={() => openBookModal()}
                         className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors"
                     >
                         <Plus className="w-4 h-4" />
-                        Add Book
+                        Tambah Buku
                     </button>
                 </div>
             </div>
@@ -211,7 +211,7 @@ const AdminBooks = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                     type="text"
-                    placeholder="Search books..."
+                    placeholder="Cari buku..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -220,22 +220,22 @@ const AdminBooks = () => {
 
             {/* Books Table */}
             {loading && books.length === 0 ? (
-                <p>Loading...</p>
+                <p>Memuat...</p>
             ) : books.length === 0 ? (
-                <EmptyState message="Belum ada buku. Klik 'Add Book' untuk menambahkan buku baru." />
+                <EmptyState message="Belum ada buku. Klik 'Tambah Buku' untuk menambahkan buku baru." />
             ) : (
                 <>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-gray-100">
-                                    <th className="p-3 border-b">Cover</th>
-                                    <th className="p-3 border-b">Title</th>
-                                    <th className="p-3 border-b">Author</th>
-                                    <th className="p-3 border-b">Category</th>
-                                    <th className="p-3 border-b text-center">Stock</th>
-                                    <th className="p-3 border-b text-center">Copies</th>
-                                    <th className="p-3 border-b text-right">Actions</th>
+                                    <th className="p-3 border-b">Sampul</th>
+                                    <th className="p-3 border-b">Judul</th>
+                                    <th className="p-3 border-b">Penulis</th>
+                                    <th className="p-3 border-b">Kategori</th>
+                                    <th className="p-3 border-b text-center">Stok</th>
+                                    <th className="p-3 border-b text-center">Eksemplar</th>
+                                    <th className="p-3 border-b text-right">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -264,7 +264,7 @@ const AdminBooks = () => {
                                         <td className="p-3 border-b text-center">
                                             <span className={`px-2 py-1 rounded text-xs font-semibold ${book.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                                                 }`}>
-                                                {book.stock} Avail
+                                                {book.stock} Tersedia
                                             </span>
                                         </td>
                                         <td className="p-3 border-b text-center">
@@ -273,7 +273,7 @@ const AdminBooks = () => {
                                                 className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full text-sm cursor-pointer transition-colors"
                                             >
                                                 <Layers className="w-4 h-4" />
-                                                {book.totalCopies} Units
+                                                {book.totalCopies} Unit
                                             </button>
                                         </td>
                                         <td className="p-3 border-b text-right">
@@ -288,7 +288,7 @@ const AdminBooks = () => {
                                                 <button
                                                     onClick={() => confirmDeleteBook(book)}
                                                     className="p-2 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
-                                                    title="Delete"
+                                                    title="Hapus"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -318,7 +318,7 @@ const AdminBooks = () => {
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-xl font-bold flex items-center gap-2">
                                 <BookOpen className="w-5 h-5 text-blue-600" />
-                                {currentBookForm.id ? 'Edit Book' : 'Add Book'}
+                                {currentBookForm.id ? 'Edit Buku' : 'Tambah Buku'}
                             </h3>
                             <button onClick={() => setIsBookModalOpen(false)} className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer">
                                 <X className="w-5 h-5 text-gray-500" />
@@ -327,7 +327,7 @@ const AdminBooks = () => {
                         <form onSubmit={handleSaveBook}>
                             {/* Image Upload */}
                             <div className="mb-4">
-                                <label className="block text-sm font-medium mb-1">Cover Image</label>
+                                <label className="block text-sm font-medium mb-1">Gambar Sampul</label>
                                 <div className="flex items-start gap-4">
                                     {imagePreview ? (
                                         <div className="relative">
@@ -376,7 +376,7 @@ const AdminBooks = () => {
                             </div>
 
                             <div className="mb-3">
-                                <label className="block text-sm font-medium mb-1">Title</label>
+                                <label className="block text-sm font-medium mb-1">Judul</label>
                                 <input
                                     type="text"
                                     value={currentBookForm.title || ''}
@@ -386,7 +386,7 @@ const AdminBooks = () => {
                                 />
                             </div>
                             <div className="mb-3">
-                                <label className="block text-sm font-medium mb-1">Author</label>
+                                <label className="block text-sm font-medium mb-1">Penulis</label>
                                 <input
                                     type="text"
                                     value={currentBookForm.author || ''}
@@ -396,23 +396,23 @@ const AdminBooks = () => {
                                 />
                             </div>
                             <div className="mb-3">
-                                <label className="block text-sm font-medium mb-1">Synopsis</label>
+                                <label className="block text-sm font-medium mb-1">Sinopsis</label>
                                 <textarea
                                     value={currentBookForm.description || ''}
                                     onChange={(e) => setCurrentBookForm({ ...currentBookForm, description: e.target.value })}
                                     className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 h-24"
-                                    placeholder="Enter book synopsis..."
+                                    placeholder="Masukkan sinopsis buku..."
                                 />
                             </div>
                             <div className="mb-3">
-                                <label className="block text-sm font-medium mb-1">Category</label>
+                                <label className="block text-sm font-medium mb-1">Kategori</label>
                                 <select
                                     value={currentBookForm.categoryId || ''}
                                     onChange={(e) => setCurrentBookForm({ ...currentBookForm, categoryId: e.target.value ? Number(e.target.value) : undefined })}
                                     className="w-full p-2 border rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
                                     required
                                 >
-                                    <option value="">-- Select Category --</option>
+                                    <option value="">-- Pilih Kategori --</option>
                                     {categories.map((cat) => (
                                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                                     ))}
@@ -421,7 +421,7 @@ const AdminBooks = () => {
 
                             {!currentBookForm.id && (
                                 <div className="mb-4 bg-blue-50 p-3 rounded-lg">
-                                    <label className="block text-sm font-medium mb-1 text-blue-800">Initial Stock</label>
+                                    <label className="block text-sm font-medium mb-1 text-blue-800">Stok Awal</label>
                                     <div className="flex items-center gap-2">
                                         <Layers className="w-4 h-4 text-blue-600" />
                                         <input
@@ -433,13 +433,13 @@ const AdminBooks = () => {
                                             required
                                         />
                                     </div>
-                                    <p className="text-xs text-blue-600 mt-1">This will generate {currentBookForm.initialStock} unique copies.</p>
+                                    <p className="text-xs text-blue-600 mt-1">Ini akan membuat {currentBookForm.initialStock} eksemplar unik.</p>
                                 </div>
                             )}
 
                             <div className="flex justify-end gap-2 mt-6">
-                                <button type="button" onClick={() => setIsBookModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer">Cancel</button>
-                                <button type="submit" className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer">Save</button>
+                                <button type="button" onClick={() => setIsBookModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer">Batal</button>
+                                <button type="submit" className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer">Simpan</button>
                             </div>
                         </form>
                     </div>
@@ -453,11 +453,11 @@ const AdminBooks = () => {
                         <div className="mx-auto w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mb-4">
                             <AlertTriangle className="w-7 h-7 text-red-600" />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Book</h3>
-                        <p className="text-gray-500 mb-6">Are you sure? This will delete all {selectedBook.totalCopies} copies associated with it.</p>
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">Hapus Buku</h3>
+                        <p className="text-gray-500 mb-6">Yakin? Ini akan menghapus semua {selectedBook.totalCopies} eksemplar yang terkait.</p>
                         <div className="flex gap-3 justify-center">
-                            <button onClick={() => setIsDeleteModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer">Cancel</button>
-                            <button onClick={handleDeleteBook} className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 cursor-pointer">Delete</button>
+                            <button onClick={() => setIsDeleteModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer">Batal</button>
+                            <button onClick={handleDeleteBook} className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 cursor-pointer">Hapus</button>
                         </div>
                     </div>
                 </div>
@@ -471,7 +471,7 @@ const AdminBooks = () => {
                             <div>
                                 <h3 className="text-xl font-bold flex items-center gap-2">
                                     <Layers className="w-5 h-5 text-blue-600" />
-                                    Manage Copies: {selectedBook.title}
+                                    Kelola Eksemplar: {selectedBook.title}
                                 </h3>
                                 <p className="text-sm text-gray-500">{selectedBook.author}</p>
                             </div>
@@ -481,13 +481,13 @@ const AdminBooks = () => {
                         </div>
 
                         <div className="flex justify-between items-center mb-4 bg-gray-50 p-3 rounded-lg">
-                            <span className="text-sm text-gray-600">Total: <b>{selectedBook.totalCopies}</b> copies</span>
+                            <span className="text-sm text-gray-600">Total: <b>{selectedBook.totalCopies}</b> eksemplar</span>
                             <button
                                 onClick={openAddCopyModal}
                                 className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer text-sm"
                             >
                                 <Plus className="w-4 h-4" />
-                                Add Copy
+                                Tambah Eksemplar
                             </button>
                         </div>
 
@@ -495,10 +495,10 @@ const AdminBooks = () => {
                             <table className="w-full text-left">
                                 <thead className="bg-gray-100 sticky top-0">
                                     <tr>
-                                        <th className="p-3 border-b text-center">Copy #</th>
-                                        <th className="p-3 border-b text-center">QR Code</th>
+                                        <th className="p-3 border-b text-center">Eksemplar #</th>
+                                        <th className="p-3 border-b text-center">Kode QR</th>
                                         <th className="p-3 border-b text-center">Status</th>
-                                        <th className="p-3 border-b text-right">Actions</th>
+                                        <th className="p-3 border-b text-right">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -523,7 +523,7 @@ const AdminBooks = () => {
                                             <td className="p-3 text-center">
                                                 {copy.status === 'BORROWED' ? (
                                                     <span className="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700">
-                                                        BORROWED
+                                                        DIPINJAM
                                                     </span>
                                                 ) : (
                                                     <select
@@ -534,9 +534,9 @@ const AdminBooks = () => {
                                                                 'bg-gray-100 text-gray-700 border-gray-200'
                                                             }`}
                                                     >
-                                                        <option value="AVAILABLE">AVAILABLE</option>
-                                                        <option value="DAMAGED">DAMAGED</option>
-                                                        <option value="LOST">LOST</option>
+                                                        <option value="AVAILABLE">TERSEDIA</option>
+                                                        <option value="DAMAGED">RUSAK</option>
+                                                        <option value="LOST">HILANG</option>
                                                     </select>
                                                 )}
                                             </td>
@@ -544,7 +544,7 @@ const AdminBooks = () => {
                                                 <button
                                                     onClick={() => handleDeleteCopy(copy.id)}
                                                     className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
-                                                    title="Delete Copy"
+                                                    title="Hapus Eksemplar"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -552,7 +552,7 @@ const AdminBooks = () => {
                                         </tr>
                                     ))}
                                     {currentBookCopies.length === 0 && (
-                                        <EmptyState message="Tidak ada copy. Klik 'Add Copy' untuk menambahkan." colSpan={4} />
+                                        <EmptyState message="Tidak ada eksemplar. Klik 'Tambah Eksemplar' untuk menambahkan." colSpan={4} />
                                     )}
                                 </tbody>
                             </table>
@@ -616,7 +616,7 @@ const AdminBooks = () => {
                             <img src={qrPreview.qrCode} alt="Large QR" className="w-full aspect-square object-contain" />
                         </div>
                         <button onClick={() => setQrPreview(null)} className="w-full py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 cursor-pointer font-medium">
-                            Close
+                            Tutup
                         </button>
                     </div>
                 </div>

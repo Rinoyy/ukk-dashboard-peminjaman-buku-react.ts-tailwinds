@@ -193,7 +193,7 @@ const AdminBorrowings = () => {
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold flex items-center gap-2">
                     <BookOpen className="w-6 h-6 text-blue-600" />
-                    Borrowing Management
+                    Manajemen Peminjaman
                 </h2>
                 <div className="flex items-center gap-2">
                     {isAdmin && (
@@ -237,12 +237,12 @@ const AdminBorrowings = () => {
                             <thead>
                                 <tr className="bg-gray-100 text-sm text-gray-600">
                                     <th className="p-3 border-b">ID</th>
-                                    <th className="p-3 border-b">User</th>
-                                    <th className="p-3 border-b">Book</th>
-                                    <th className="p-3 border-b">Dates</th>
+                                    <th className="p-3 border-b">Pengguna</th>
+                                    <th className="p-3 border-b">Buku</th>
+                                    <th className="p-3 border-b">Tanggal</th>
                                     <th className="p-3 border-b">Status</th>
-                                    <th className="p-3 border-b">Fines</th>
-                                    <th className="p-3 border-b">Actions</th>
+                                    <th className="p-3 border-b">Denda</th>
+                                    <th className="p-3 border-b">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody className="text-sm">
@@ -260,17 +260,17 @@ const AdminBorrowings = () => {
                                             <div className="flex flex-col gap-1 text-xs">
                                                 {b.borrowDate && (
                                                     <span className="text-gray-600">
-                                                        Borrow: {new Date(b.borrowDate).toLocaleDateString()}
+                                                        Pinjam: {new Date(b.borrowDate).toLocaleDateString()}
                                                     </span>
                                                 )}
                                                 {b.dueDate && (
                                                     <span className={`font-medium ${new Date() > new Date(b.dueDate) && b.status === 'BORROWED' ? 'text-red-600' : 'text-blue-600'}`}>
-                                                        Due: {new Date(b.dueDate).toLocaleDateString()}
+                                                        Jatuh Tempo: {new Date(b.dueDate).toLocaleDateString()}
                                                     </span>
                                                 )}
                                                 {b.actualReturnDate && (
                                                     <span className="text-green-600">
-                                                        Returned: {new Date(b.actualReturnDate).toLocaleDateString()}
+                                                        Dikembalikan: {new Date(b.actualReturnDate).toLocaleDateString()}
                                                     </span>
                                                 )}
                                             </div>
@@ -286,11 +286,17 @@ const AdminBorrowings = () => {
                                             >
                                                 {b.status === 'BORROWED' && !b.isPickedUp
                                                     ? 'BELUM DIAMBIL'
+                                                    : b.status === 'PENDING' ? 'MENUNGGU'
+                                                    : b.status === 'BORROWED' ? 'DIPINJAM'
+                                                    : b.status === 'RETURN_PENDING' ? 'MENUNGGU KEMBALI'
+                                                    : b.status === 'RETURNED' ? 'DIKEMBALIKAN'
+                                                    : b.status === 'REJECTED' ? 'DITOLAK'
+                                                    : b.status === 'CANCELLED' ? 'DIBATALKAN'
                                                     : b.status.replace('_', ' ')}
                                             </span>
                                             {b.condition && b.condition !== 'GOOD' && (
                                                 <span className="ml-2 px-2 py-1 text-xs rounded-full bg-red-50 text-red-600 border border-red-200">
-                                                    {b.condition}
+                                                    {b.condition === 'DAMAGED' ? 'RUSAK' : b.condition === 'LOST' ? 'HILANG' : b.condition}
                                                 </span>
                                             )}
                                         </td>
@@ -302,11 +308,11 @@ const AdminBorrowings = () => {
                                                     </span>
                                                     {b.isPaid ? (
                                                         <span className="text-xs text-green-600 font-medium flex items-center gap-1">
-                                                            <CheckCircle className="w-3 h-3" /> PAID
+                                                            <CheckCircle className="w-3 h-3" /> LUNAS
                                                         </span>
                                                     ) : (
                                                         <span className="text-xs text-red-500 font-medium flex items-center gap-1">
-                                                            <AlertCircle className="w-3 h-3" /> UNPAID
+                                                            <AlertCircle className="w-3 h-3" /> BELUM LUNAS
                                                         </span>
                                                     )}
                                                 </div>
@@ -321,14 +327,14 @@ const AdminBorrowings = () => {
                                                         <button
                                                             onClick={() => openApproveModal(b)}
                                                             className="p-1.5 text-green-600 hover:bg-green-50 rounded cursor-pointer"
-                                                            title="Approve"
+                                                            title="Setujui"
                                                         >
                                                             <CheckCircle className="w-5 h-5" />
                                                         </button>
                                                         <button
                                                             onClick={() => openRejectModal(b)}
                                                             className="p-1.5 text-red-600 hover:bg-red-50 rounded cursor-pointer"
-                                                            title="Reject"
+                                                            title="Tolak"
                                                         >
                                                             <XCircle className="w-5 h-5" />
                                                         </button>
@@ -353,7 +359,7 @@ const AdminBorrowings = () => {
                                                         className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                                                         title={!isUserCheckedIn(b.userId) ? 'Siswa belum check-in hari ini' : 'Verifikasi pengembalian buku'}
                                                     >
-                                                        Verify Return
+                                                        Verifikasi Kembali
                                                     </button>
                                                 )}
 
@@ -363,7 +369,7 @@ const AdminBorrowings = () => {
                                                         className="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer font-medium flex items-center gap-1"
                                                     >
                                                         <DollarSign className="w-3 h-3" />
-                                                        Pay Fine
+                                                        Bayar Denda
                                                     </button>
                                                 )}
                                             </div>
@@ -396,9 +402,9 @@ const AdminBorrowings = () => {
                                 onChange={(e) => setReturnCondition(e.target.value as ReturnCondition)}
                                 className="w-full p-2 border rounded-lg"
                             >
-                                <option value="GOOD">Baik (Good)</option>
-                                <option value="DAMAGED">Rusak (Damaged)</option>
-                                <option value="LOST">Hilang (Lost)</option>
+                                <option value="GOOD">Baik</option>
+                                <option value="DAMAGED">Rusak</option>
+                                <option value="LOST">Hilang</option>
                             </select>
                         </div>
 

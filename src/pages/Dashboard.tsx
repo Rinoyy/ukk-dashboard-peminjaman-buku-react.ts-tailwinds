@@ -19,7 +19,7 @@ export default function Dashboard() {
         navigate('/login');
     };
 
-    if (!user) return <div className="p-8">Loading...</div>;
+    if (!user) return <div className="p-8">Memuat...</div>;
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -31,37 +31,37 @@ export default function Dashboard() {
                             onClick={() => navigate('/add-petugas')}
                             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
                         >
-                            Add Petugas
+                            Tambah Petugas
                         </button>
                     )}
                     <button
                         onClick={handleLogout}
                         className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
                     >
-                        Logout
+                        Keluar
                     </button>
                 </div>
             </nav>
 
             <main className="max-w-4xl mx-auto p-8">
                 <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center">
-                    <h2 className="text-2xl font-semibold mb-4 text-gray-800">Welcome, {user.username}!</h2>
+                    <h2 className="text-2xl font-semibold mb-4 text-gray-800">Selamat Datang, {user.username}!</h2>
                     <div className="mb-6">
-                        <p className="text-gray-600 mb-2 text-center">Your Personal QR Code</p>
+                        <p className="text-gray-600 mb-2 text-center">Kode QR Pribadi Anda</p>
                         {user.qrCode ? (
                             <img src={user.qrCode} alt="User QR Code" className="w-64 h-64 border-2 border-gray-200 rounded p-2" />
                         ) : (
                             <div className="w-64 h-64 bg-gray-200 flex items-center justify-center rounded">
-                                <span className="text-gray-500">No QR Code generated</span>
+                                <span className="text-gray-500">Kode QR belum dibuat</span>
                             </div>
                         )}
                     </div>
                     <div className="w-full border-t pt-4">
-                        <h3 className="text-lg font-medium text-gray-700 mb-2">User Details</h3>
+                        <h3 className="text-lg font-medium text-gray-700 mb-2">Detail Pengguna</h3>
                         <ul className="text-gray-600">
                             <li><strong>ID:</strong> {user.id}</li>
                             <li><strong>Role:</strong> {user.role}</li>
-                            <li><strong>Created At:</strong> {new Date(user.createdAt).toLocaleDateString()}</li>
+                            <li><strong>Dibuat Pada:</strong> {new Date(user.createdAt).toLocaleDateString()}</li>
                         </ul>
                     </div>
                 </div>
