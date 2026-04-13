@@ -21,7 +21,7 @@ const Login = () => {
                     <div className="w-16 h-16 mx-auto bg-blue-50 rounded-2xl flex items-center justify-center mb-4">
                         <BookOpen className="w-8 h-8 text-blue-600" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-800">Login Admin</h2>
+                    <h2 className="text-2xl font-bold text-gray-800">Login Pengurus</h2>
                     <p className="text-gray-500 text-sm mt-1">Masuk ke dashboard perpustakaan</p>
                 </div>
 
