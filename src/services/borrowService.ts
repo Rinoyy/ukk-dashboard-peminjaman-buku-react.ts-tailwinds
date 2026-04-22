@@ -24,7 +24,7 @@ class BorrowService {
         return response.json();
     }
 
-    async adminApproveBorrow(id: number, status: 'BORROWED' | 'REJECTED', rejectReason?: string): Promise<Borrowing> {
+    async adminApproveBorrow(id: number, status: 'BORROWED' | 'REJECTED', rejectReason?: string, dueDate?: string): Promise<Borrowing> {
         if (!id || id <= 0) {
             throw new Error('ID peminjaman tidak valid');
         }
@@ -39,7 +39,7 @@ class BorrowService {
                 'Content-Type': 'application/json',
                 ...(token && { Authorization: `Bearer ${token}` }),
             },
-            body: JSON.stringify({ status, rejectReason }),
+            body: JSON.stringify({ status, rejectReason, dueDate }),
         });
 
         if (isUnauthorized(response.status)) {

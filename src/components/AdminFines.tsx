@@ -2,17 +2,48 @@ import React, { useMemo, useState } from 'react';
 import { useFines } from '../hooks/useFines';
 import { useExport } from '../hooks/useExport';
 import { useAuth } from '../hooks/useAuth';
+import { borrowService } from '../services/borrowService';
 import { DollarSign, AlertCircle, CheckCircle, Clock, Search } from 'lucide-react';
 import Pagination from './Pagination';
+import type { FineRecord } from '../types';
 
 const AdminFines = () => {
-    const { summary, fines, loading, error } = useFines();
+    const { summary, fines, loading, error, fetchFinesRecap } = useFines();
     const { downloadExport } = useExport();
     const { user } = useAuth();
     const isAdmin = user?.role === 'ADMIN';
     const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 10;
+
+    const [selectedFine, setSelectedFine] = useState<FineRecord | null>(null);
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+    const [amountPaid, setAmountPaid] = useState<number | ''>(0);
+    const [change, setChange] = useState<number | null>(null);
+
+    const openPaymentModal = (fine: FineRecord) => {
+        setSelectedFine(fine);
+        setAmountPaid(fine.totalFine);
+        setChange(null);
+        setIsPaymentModalOpen(true);
+    };
+
+    const handleProcessPayment = async () => {
+        if (!selectedFine) return;
+        const amount = amountPaid === '' ? 0 : amountPaid;
+        try {
+            const result = await borrowService.payFine(selectedFine.id, amount);
+            setChange(result.change);
+            setTimeout(() => {
+                setIsPaymentModalOpen(false);
+                setChange(null);
+                setSelectedFine(null);
+                fetchFinesRecap();
+            }, 3000);
+        } catch (err) {
+            alert(err instanceof Error ? err.message : 'Gagal memproses pembayaran');
+        }
+    };
 
     const filteredFines = useMemo(() => {
         const q = search.toLowerCase();
@@ -121,6 +152,7 @@ const AdminFines = () => {
                                 <th className="p-4 text-sm font-semibold text-gray-600 text-right">Kerusakan</th>
                                 <th className="p-4 text-sm font-semibold text-gray-600 text-right">Total Denda</th>
                                 <th className="p-4 text-sm font-semibold text-gray-600 text-center">Status</th>
+                                <th className="p-4 text-sm font-semibold text-gray-600 text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
@@ -151,11 +183,21 @@ const AdminFines = () => {
                                             </span>
                                         )}
                                     </td>
+                                    <td className="p-4 text-center">
+                                        {!fine.isPaid && (
+                                            <button
+                                                onClick={() => openPaymentModal(fine)}
+                                                className="flex items-center gap-1 px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 cursor-pointer transition-colors mx-auto"
+                                            >
+                                                <DollarSign className="w-3 h-3" /> Bayar Denda
+                                            </button>
+                                        )}
+                                    </td>
                                 </tr>
                             ))}
                             {filteredFines.length === 0 && (
                                 <tr>
-                                    <td colSpan={7} className="p-8 text-center text-gray-500">
+                                    <td colSpan={8} className="p-8 text-center text-gray-500">
                                         {search ? 'Data tidak ditemukan.' : 'Tidak ada data denda.'}
                                     </td>
                                 </tr>
@@ -176,6 +218,72 @@ const AdminFines = () => {
                     </div>
                 )}
             </div>
+
+            {/* Modal Payment */}
+            {isPaymentModalOpen && selectedFine && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+                    <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-xl">
+                        <h3 className="text-lg font-bold mb-4">Pembayaran Denda</h3>
+
+                        <div className="bg-red-50 p-4 rounded-lg mb-4 border border-red-100">
+                            <p className="text-sm text-gray-600 mb-1">{selectedFine.user.username} — {selectedFine.bookCopy.book.title}</p>
+                            <div className="flex justify-between mb-2">
+                                <span className="text-gray-600">Total Denda:</span>
+                                <span className="font-bold text-red-600 text-lg">
+                                    Rp {selectedFine.totalFine.toLocaleString('id-ID')}
+                                </span>
+                            </div>
+                            <div className="text-xs text-gray-500">
+                                {selectedFine.lateFee > 0 && <div>• Keterlambatan: Rp {selectedFine.lateFee.toLocaleString('id-ID')}</div>}
+                                {selectedFine.damageFee > 0 && <div>• Kerusakan: Rp {selectedFine.damageFee.toLocaleString('id-ID')}</div>}
+                            </div>
+                        </div>
+
+                        {!change ? (
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium mb-1">Uang Diterima (Cash)</label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-2 text-gray-500">Rp</span>
+                                    <input
+                                        type="number"
+                                        value={amountPaid}
+                                        onChange={(e) => setAmountPaid(Number(e.target.value))}
+                                        className="w-full pl-10 p-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                                        min={selectedFine.totalFine}
+                                        autoFocus
+                                    />
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="mb-6 bg-green-50 p-4 rounded-lg border border-green-100 text-center">
+                                <p className="text-green-800 font-medium mb-1">Pembayaran Berhasil!</p>
+                                <p className="text-sm text-gray-600">Kembalian:</p>
+                                <p className="text-2xl font-bold text-green-700">Rp {change.toLocaleString('id-ID')}</p>
+                            </div>
+                        )}
+
+                        <div className="flex justify-end gap-2">
+                            {!change && (
+                                <>
+                                    <button
+                                        onClick={() => setIsPaymentModalOpen(false)}
+                                        className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg cursor-pointer"
+                                    >
+                                        Batal
+                                    </button>
+                                    <button
+                                        onClick={handleProcessPayment}
+                                        disabled={(amountPaid === '' ? 0 : amountPaid) < selectedFine.totalFine}
+                                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Bayar Sekarang
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

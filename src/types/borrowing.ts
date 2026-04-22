@@ -26,6 +26,7 @@ export interface Borrowing {
         book: {
             title: string;
             author: string;
+            price?: number;
         };
     };
     user?: User;

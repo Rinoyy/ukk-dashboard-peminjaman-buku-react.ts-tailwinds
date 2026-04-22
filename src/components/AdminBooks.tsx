@@ -95,6 +95,7 @@ const AdminBooks = () => {
             author: currentBookForm.author ?? '',
             categoryId: currentBookForm.categoryId,
             description: currentBookForm.description,
+            price: (currentBookForm as any).price ?? 0,
             stock: currentBookForm.initialStock, // Only used for creation
         };
 
@@ -233,6 +234,7 @@ const AdminBooks = () => {
                                     <th className="p-3 border-b">Judul</th>
                                     <th className="p-3 border-b">Penulis</th>
                                     <th className="p-3 border-b">Kategori</th>
+                                    <th className="p-3 border-b text-right">Harga</th>
                                     <th className="p-3 border-b text-center">Stok</th>
                                     <th className="p-3 border-b text-center">Eksemplar</th>
                                     <th className="p-3 border-b text-right">Aksi</th>
@@ -260,6 +262,12 @@ const AdminBooks = () => {
                                             <span className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded">
                                                 {book.category?.name || '-'}
                                             </span>
+                                        </td>
+                                        <td className="p-3 border-b text-right text-sm font-medium">
+                                            {book.price > 0
+                                                ? `Rp ${book.price.toLocaleString('id-ID')}`
+                                                : <span className="text-gray-400">-</span>
+                                            }
                                         </td>
                                         <td className="p-3 border-b text-center">
                                             <span className={`px-2 py-1 rounded text-xs font-semibold ${book.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
@@ -417,6 +425,27 @@ const AdminBooks = () => {
                                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                                     ))}
                                 </select>
+                            </div>
+
+                            <div className="mb-3">
+                                <label className="block text-sm font-medium mb-1">Harga Buku (Rp)</label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">Rp</span>
+                                    <input
+                                        type="text"
+                                        inputMode="numeric"
+                                        value={(currentBookForm as any).price !== undefined && (currentBookForm as any).price !== 0
+                                            ? Number((currentBookForm as any).price).toLocaleString('id-ID')
+                                            : ''}
+                                        onChange={(e) => {
+                                            const raw = e.target.value.replace(/\./g, '').replace(/[^0-9]/g, '');
+                                            setCurrentBookForm({ ...currentBookForm, price: raw === '' ? 0 : Number(raw) } as any);
+                                        }}
+                                        className="w-full pl-9 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        placeholder="0"
+                                    />
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1">Digunakan sebagai denda otomatis jika buku rusak atau hilang.</p>
                             </div>
 
                             {!currentBookForm.id && (

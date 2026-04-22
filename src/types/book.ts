@@ -19,6 +19,7 @@ export interface Book {
     };
     description?: string;
     image?: string;
+    price: number;
     stock: number;
     createdAt: string;
     updatedAt: string;

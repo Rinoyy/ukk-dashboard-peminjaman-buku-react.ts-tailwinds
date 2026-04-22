@@ -48,6 +48,9 @@ const AdminBorrowings = ({ mode }: { mode: 'borrowings' | 'returns' }) => {
     const [approveLoading, setApproveLoading] = useState(false);
     const [rejectLoading, setRejectLoading] = useState(false);
 
+    // Approve due date
+    const [approveDueDate, setApproveDueDate] = useState('');
+
     // ... (existing code)
 
     const handleProcessPayment = async () => {
@@ -72,6 +75,7 @@ const AdminBorrowings = ({ mode }: { mode: 'borrowings' | 'returns' }) => {
 
     const openApproveModal = (borrowing: Borrowing) => {
         setSelectedBorrowing(borrowing);
+        setApproveDueDate(borrowing.dueDate ? new Date(borrowing.dueDate).toISOString().slice(0, 10) : '');
         setIsApproveModalOpen(true);
     };
 
@@ -83,8 +87,12 @@ const AdminBorrowings = ({ mode }: { mode: 'borrowings' | 'returns' }) => {
 
     const handleConfirmApprove = async () => {
         if (!selectedBorrowing) return;
+        if (!approveDueDate) {
+            alert('Tanggal pengembalian wajib diisi');
+            return;
+        }
         setApproveLoading(true);
-        await adminApproveBorrow(selectedBorrowing.id, 'BORROWED');
+        await adminApproveBorrow(selectedBorrowing.id, 'BORROWED', undefined, approveDueDate);
         setApproveLoading(false);
         setIsApproveModalOpen(false);
         setSelectedBorrowing(null);
@@ -403,16 +411,12 @@ const AdminBorrowings = ({ mode }: { mode: 'borrowings' | 'returns' }) => {
                         </div>
 
                         {returnCondition !== 'GOOD' && (
-                            <div className="mb-6">
-                                <label className="block text-sm font-medium mb-1">Denda Kerusakan (Rp)</label>
-                                <input
-                                    type="number"
-                                    value={damageFee}
-                                    onChange={(e) => setDamageFee(Number(e.target.value))}
-                                    className="w-full p-2 border rounded-lg"
-                                    min="0"
-                                />
-                                <p className="text-xs text-gray-500 mt-1">Masukkan nominal denda kerusakan/kehilangan.</p>
+                            <div className="mb-6 bg-orange-50 border border-orange-100 rounded-lg p-3">
+                                <p className="text-sm font-medium text-orange-800 mb-1">Denda Kerusakan/Kehilangan</p>
+                                <p className="text-lg font-bold text-orange-700">
+                                    Rp {(selectedBorrowing?.bookCopy?.book?.price ?? 0).toLocaleString('id-ID')}
+                                </p>
+                                <p className="text-xs text-orange-600 mt-1">Otomatis sesuai harga buku.</p>
                             </div>
                         )}
 
@@ -523,9 +527,21 @@ const AdminBorrowings = ({ mode }: { mode: 'borrowings' | 'returns' }) => {
                                 </div>
                             </div>
                         </div>
-                        <p className="text-sm text-gray-600 mb-6">
-                            Buku akan dipinjamkan selama <span className="font-bold">7 hari</span>. Siswa akan menerima notifikasi untuk mengambil buku di perpustakaan.
-                        </p>
+                        <div className="mb-6">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Tanggal Pengembalian
+                            </label>
+                            <input
+                                type="date"
+                                value={approveDueDate}
+                                min={new Date(Date.now() + 86400000).toISOString().slice(0, 10)}
+                                onChange={(e) => setApproveDueDate(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-sm"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">
+                                Tanggal diisi otomatis dari permintaan siswa. Bisa diubah sebelum menyetujui.
+                            </p>
+                        </div>
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => setIsApproveModalOpen(false)}

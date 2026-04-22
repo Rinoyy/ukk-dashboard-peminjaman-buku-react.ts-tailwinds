@@ -70,6 +70,7 @@ class BookService {
         if (bookData.categoryId) formData.append('categoryId', String(bookData.categoryId));
         if (bookData.description) formData.append('description', bookData.description);
         if (bookData.stock) formData.append('stock', String(bookData.stock));
+        if (bookData.price !== undefined) formData.append('price', String(bookData.price));
         if (imageFile) formData.append('image', imageFile);
 
         const response = await fetch(`${API_URL}/books`, {
@@ -107,6 +108,7 @@ class BookService {
         if (bookData.author) formData.append('author', bookData.author);
         if (bookData.categoryId) formData.append('categoryId', String(bookData.categoryId));
         if (bookData.description !== undefined) formData.append('description', bookData.description || '');
+        if (bookData.price !== undefined) formData.append('price', String(bookData.price));
         if (imageFile) formData.append('image', imageFile);
 
         const response = await fetch(`${API_URL}/books/${id}`, {
