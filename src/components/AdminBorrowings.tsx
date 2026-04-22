@@ -10,7 +10,10 @@ import { CheckCircle, XCircle, AlertCircle, DollarSign, BookOpen, Download, Sear
 
 const todayStr = new Date().toISOString().slice(0, 10);
 
-const AdminBorrowings = () => {
+const BORROWING_STATUSES = ['PENDING', 'BORROWED', 'REJECTED', 'CANCELLED'];
+const RETURN_STATUSES = ['RETURN_PENDING', 'RETURNED'];
+
+const AdminBorrowings = ({ mode }: { mode: 'borrowings' | 'returns' }) => {
     const { borrowings, loading, error, fetchBorrowings, adminApproveBorrow, adminVerifyReturn, markPickedUp, payFine } = useBorrow();
     const { visits, fetchVisits } = useVisits();
     const { downloadExport } = useExport();
@@ -164,14 +167,16 @@ const AdminBorrowings = () => {
 
 
     const filteredBorrowings = useMemo(() => {
+        const allowedStatuses = mode === 'borrowings' ? BORROWING_STATUSES : RETURN_STATUSES;
+        const byMode = borrowings.filter((b) => allowedStatuses.includes(b.status));
         const q = search.toLowerCase();
-        if (!q) return borrowings;
-        return borrowings.filter((b) =>
+        if (!q) return byMode;
+        return byMode.filter((b) =>
             b.user?.username.toLowerCase().includes(q) ||
             b.bookCopy?.book.title.toLowerCase().includes(q) ||
             b.status.toLowerCase().includes(q)
         );
-    }, [borrowings, search]);
+    }, [borrowings, search, mode]);
 
     const paginatedBorrowings = useMemo(() => {
         const start = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -193,28 +198,17 @@ const AdminBorrowings = () => {
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold flex items-center gap-2">
                     <BookOpen className="w-6 h-6 text-blue-600" />
-                    Manajemen Peminjaman
+                    {mode === 'borrowings' ? 'Manajemen Peminjaman' : 'Manajemen Pengembalian'}
                 </h2>
-                <div className="flex items-center gap-2">
-                    {isAdmin && (
-                        <>
-                            <button
-                                onClick={() => downloadExport('borrowings')}
-                                className="flex items-center gap-2 px-3 py-1.5 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 cursor-pointer text-sm transition-colors"
-                            >
-                                <Download className="w-4 h-4" />
-                                Peminjaman
-                            </button>
-                            <button
-                                onClick={() => downloadExport('returns')}
-                                className="flex items-center gap-2 px-3 py-1.5 text-green-600 border border-green-600 rounded-lg hover:bg-green-50 cursor-pointer text-sm transition-colors"
-                            >
-                                <Download className="w-4 h-4" />
-                                Pengembalian
-                            </button>
-                        </>
-                    )}
-                </div>
+                {isAdmin && (
+                    <button
+                        onClick={() => downloadExport(mode === 'borrowings' ? 'borrowings' : 'returns')}
+                        className="flex items-center gap-2 px-3 py-1.5 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 cursor-pointer text-sm transition-colors"
+                    >
+                        <Download className="w-4 h-4" />
+                        Ekspor CSV
+                    </button>
+                )}
             </div>
 
             <div className="relative mb-4">
@@ -229,7 +223,7 @@ const AdminBorrowings = () => {
             </div>
 
             {filteredBorrowings.length === 0 ? (
-                <EmptyState message={search ? 'Data tidak ditemukan.' : 'Belum ada permintaan peminjaman.'} />
+                <EmptyState message={search ? 'Data tidak ditemukan.' : mode === 'borrowings' ? 'Belum ada permintaan peminjaman.' : 'Belum ada data pengembalian.'} />
             ) : (
                 <>
                     <div className="overflow-x-auto">
@@ -292,7 +286,7 @@ const AdminBorrowings = () => {
                                                     : b.status === 'RETURNED' ? 'DIKEMBALIKAN'
                                                     : b.status === 'REJECTED' ? 'DITOLAK'
                                                     : b.status === 'CANCELLED' ? 'DIBATALKAN'
-                                                    : b.status.replace('_', ' ')}
+                                                    : b.status}
                                             </span>
                                             {b.condition && b.condition !== 'GOOD' && (
                                                 <span className="ml-2 px-2 py-1 text-xs rounded-full bg-red-50 text-red-600 border border-red-200">
@@ -383,7 +377,7 @@ const AdminBorrowings = () => {
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={setCurrentPage}
-                        totalItems={borrowings.length}
+                        totalItems={filteredBorrowings.length}
                         itemsPerPage={ITEMS_PER_PAGE}
                     />
                 </>

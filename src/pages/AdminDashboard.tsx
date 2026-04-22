@@ -33,9 +33,9 @@ const AdminDashboard = () => {
             case 'books':
                 return isAdmin ? <AdminBooks /> : null;
             case 'borrowings':
-                return <AdminBorrowings />;
+                return <AdminBorrowings mode="borrowings" />;
             case 'returns':
-                return <AdminBorrowings />;
+                return <AdminBorrowings mode="returns" />;
             case 'fines':
                 return <AdminFines />;
             case 'visits':

@@ -4,10 +4,8 @@ import { useVisits } from '../hooks/useVisits';
 import { useExport } from '../hooks/useExport';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
-import { QrCode, LogIn, LogOut, X, CheckCircle, XCircle, Loader2, Search, User } from 'lucide-react';
+import { QrCode, X, CheckCircle, XCircle, Loader2, Search, User } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-
-type ScanMode = 'checkin' | 'checkout';
 
 const Visits = () => {
     const {
@@ -27,7 +25,6 @@ const Visits = () => {
 
     // Scanner modal state
     const [scannerOpen, setScannerOpen] = useState(false);
-    const [scanMode, setScanMode] = useState<ScanMode>('checkin');
     const processingRef = useRef(false);
 
     useEffect(() => {
@@ -56,10 +53,9 @@ const Visits = () => {
 
     const totalPages = Math.ceil(filteredVisits.length / ITEMS_PER_PAGE);
 
-    const openScanner = (mode: ScanMode) => {
+    const openScanner = () => {
         clearScan();
         processingRef.current = false;
-        setScanMode(mode);
         setScannerOpen(true);
     };
 
@@ -82,10 +78,12 @@ const Visits = () => {
                 processingRef.current = false;
                 return;
             }
-            if (scanMode === 'checkin') {
-                await doCheckIn(data.id, selectedDate);
-            } else {
+            // Auto-detect: jika siswa sudah masuk tapi belum keluar → checkout, selainnya → checkin
+            const activeVisit = visits.find((v) => v.userId === data.id && !v.checkoutDate);
+            if (activeVisit) {
                 await doCheckOut(data.id, selectedDate);
+            } else {
+                await doCheckIn(data.id, selectedDate);
             }
         } catch {
             // non-JSON QR — ignore
@@ -125,18 +123,11 @@ const Visits = () => {
                         />
                     </div>
                     <button
-                        onClick={() => openScanner('checkin')}
-                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer text-sm font-medium transition-colors"
+                        onClick={openScanner}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer text-sm font-medium transition-colors"
                     >
-                        <LogIn className="w-4 h-4" />
-                        Scan Masuk
-                    </button>
-                    <button
-                        onClick={() => openScanner('checkout')}
-                        className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 cursor-pointer text-sm font-medium transition-colors"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        Scan Keluar
+                        <QrCode className="w-4 h-4" />
+                        Scan
                     </button>
                     {isAdmin && (
                         <button
@@ -225,12 +216,10 @@ const Visits = () => {
                 <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
                     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
                         {/* Modal Header */}
-                        <div className={`flex items-center justify-between px-5 py-4 ${scanMode === 'checkin' ? 'bg-green-600' : 'bg-orange-500'}`}>
+                        <div className="flex items-center justify-between px-5 py-4 bg-blue-600">
                             <div className="flex items-center gap-2 text-white">
-                                {scanMode === 'checkin'
-                                    ? <><LogIn className="w-5 h-5" /><span className="font-bold text-lg">Scan Masuk</span></>
-                                    : <><LogOut className="w-5 h-5" /><span className="font-bold text-lg">Scan Keluar</span></>
-                                }
+                                <QrCode className="w-5 h-5" />
+                                <span className="font-bold text-lg">Scan QR</span>
                             </div>
                             <button onClick={closeScanner} className="text-white/80 hover:text-white cursor-pointer">
                                 <X className="w-5 h-5" />
@@ -263,7 +252,7 @@ const Visits = () => {
                                 <div className={`flex items-center gap-3 w-full p-3 rounded-xl ${scanResult.type === 'checkin' ? 'bg-green-50 text-green-800' : 'bg-orange-50 text-orange-800'}`}>
                                     <CheckCircle className="w-6 h-6 shrink-0" />
                                     <div>
-                                        <p className="font-bold">{scanResult.type === 'checkin' ? 'Check-in Berhasil!' : 'Check-out Berhasil!'}</p>
+                                        <p className="font-bold">{scanResult.type === 'checkin' ? 'Masuk Berhasil!' : 'Keluar Berhasil!'}</p>
                                         <p className="text-sm">{scanResult.username}</p>
                                     </div>
                                 </div>
@@ -287,21 +276,6 @@ const Visits = () => {
                             )}
                         </div>
 
-                        {/* Mode Toggle */}
-                        <div className="px-5 pb-4 flex gap-2">
-                            <button
-                                onClick={() => { clearScan(); setScanMode('checkin'); }}
-                                className={`flex-1 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${scanMode === 'checkin' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                            >
-                                Masuk
-                            </button>
-                            <button
-                                onClick={() => { clearScan(); setScanMode('checkout'); }}
-                                className={`flex-1 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${scanMode === 'checkout' ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                            >
-                                Keluar
-                            </button>
-                        </div>
                     </div>
                 </div>
             )}

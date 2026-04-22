@@ -1,7 +1,7 @@
 import {
     LayoutDashboard, Users, ShieldCheck, FolderOpen, BookMarked,
     BookUp, BookDown, Banknote, LogIn, LogOut,
-    ChevronLeft, ChevronRight, X, BookOpen, type LucideIcon
+    ChevronLeft, ChevronRight, X, type LucideIcon
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
@@ -89,7 +89,7 @@ const Sidebar = ({ activeTab, onTabChange, collapsed, setCollapsed, mobileOpen, 
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
                 {!collapsed && (
                     <h1 className="text-xl font-bold text-blue-400 flex items-center gap-2">
-                        <BookOpen className="w-5 h-5" /> Library
+                        <img src="/logo.svg" className="w-6 h-6" alt="logo" /> Library
                     </h1>
                 )}
                 <button

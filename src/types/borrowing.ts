@@ -1,6 +1,6 @@
 import type { User } from './user';
 
-export type BorrowStatus = 'PENDING' | 'BORROWED' | 'RETURN_PENDING' | 'RETURNED' | 'REJECTED';
+export type BorrowStatus = 'PENDING' | 'BORROWED' | 'RETURN_PENDING' | 'RETURNED' | 'REJECTED' | 'CANCELLED';
 
 export type ReturnCondition = 'GOOD' | 'DAMAGED' | 'LOST';
 
