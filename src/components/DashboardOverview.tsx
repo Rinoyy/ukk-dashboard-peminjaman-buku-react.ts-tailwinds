@@ -1,21 +1,27 @@
 import { useEffect } from 'react';
 import { useVisits } from '../hooks/useVisits';
 import { useBooks } from '../hooks/useBooks';
+import { useBorrow } from '../hooks/useBorrow';
 import { LogIn, BookMarked, BookUp, Clock, type LucideIcon } from 'lucide-react';
 
 const DashboardOverview = () => {
     const { todayCount, fetchTodayCount } = useVisits();
     const { books } = useBooks();
+    const { borrowings, fetchBorrowings } = useBorrow();
 
     useEffect(() => {
         fetchTodayCount();
-    }, [fetchTodayCount]);
+        fetchBorrowings();
+    }, [fetchTodayCount, fetchBorrowings]);
+
+    const activeBorrowings = borrowings.filter(b => b.status === 'BORROWED').length;
+    const pendingApprovals = borrowings.filter(b => b.status === 'PENDING').length;
 
     const stats: { label: string; value: string | number; icon: LucideIcon; color: string }[] = [
-        { label: "Pengunjung Hari Ini", value: todayCount,   icon: LogIn,      color: "bg-blue-500" },
-        { label: "Total Buku",          value: books.length, icon: BookMarked, color: "bg-green-500" },
-        { label: "Peminjaman Aktif",    value: "-",          icon: BookUp,     color: "bg-yellow-500" },
-        { label: "Menunggu Approval",   value: "-",          icon: Clock,      color: "bg-purple-500" },
+        { label: "Pengunjung Hari Ini", value: todayCount,      icon: LogIn,      color: "bg-blue-500" },
+        { label: "Total Buku",          value: books.length,    icon: BookMarked, color: "bg-green-500" },
+        { label: "Peminjaman Aktif",    value: activeBorrowings, icon: BookUp,    color: "bg-yellow-500" },
+        { label: "Menunggu Approval",   value: pendingApprovals, icon: Clock,     color: "bg-purple-500" },
     ];
 
     return (
