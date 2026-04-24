@@ -25,9 +25,8 @@ const AnggotaList = () => {
 
     // Form state
     const [formOpen, setFormOpen] = useState(false);
-    const [username, setUsername] = useState('');
+    const [nip, setNip] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState<'GURU' | 'STAFF'>('GURU');
     const [showPassword, setShowPassword] = useState(false);
     const [formError, setFormError] = useState('');
     const [formLoading, setFormLoading] = useState(false);
@@ -74,11 +73,10 @@ const AnggotaList = () => {
         setFormError('');
         setFormLoading(true);
         try {
-            await userService.createMember(username, password, role);
+            await userService.createMember(nip, password);
             setFormOpen(false);
-            setUsername('');
+            setNip('');
             setPassword('');
-            setRole('GURU');
             loadMembers();
         } catch (err) {
             setFormError(err instanceof Error ? err.message : 'Gagal membuat akun.');
@@ -122,7 +120,7 @@ const AnggotaList = () => {
                         />
                     </div>
                     <button
-                        onClick={() => { setFormOpen(true); setFormError(''); setUsername(''); setPassword(''); setRole('GURU'); }}
+                        onClick={() => { setFormOpen(true); setFormError(''); setNip(''); setPassword(''); }}
                         className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer text-sm transition-colors"
                     >
                         <UserPlus className="w-4 h-4" />
@@ -197,26 +195,17 @@ const AnggotaList = () => {
                                 <p className="mb-3 text-sm text-red-600 bg-red-50 p-2 rounded-lg">{formError}</p>
                             )}
                             <div className="mb-3">
-                                <label className="block text-sm font-medium mb-1">Role</label>
-                                <select
-                                    value={role}
-                                    onChange={(e) => setRole(e.target.value as 'GURU' | 'STAFF')}
-                                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                >
-                                    <option value="GURU">Guru</option>
-                                    <option value="STAFF">Staff</option>
-                                </select>
-                            </div>
-                            <div className="mb-3">
-                                <label className="block text-sm font-medium mb-1">Username</label>
+                                <label className="block text-sm font-medium mb-1">NIP</label>
                                 <input
                                     type="text"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    value={nip}
+                                    onChange={(e) => setNip(e.target.value)}
+                                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none font-mono"
+                                    placeholder="Nomor Induk Pegawai"
                                     required
                                     autoFocus
                                 />
+                                <p className="mt-1 text-xs text-gray-500">NIP harus sudah terdaftar di Data NIP Guru/Staff.</p>
                             </div>
                             <div className="mb-5">
                                 <label className="block text-sm font-medium mb-1">Password</label>
@@ -225,7 +214,7 @@ const AnggotaList = () => {
                                         type={showPassword ? 'text' : 'password'}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full p-2 pr-9 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full p-2 pr-9 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                                         required
                                     />
                                     <button

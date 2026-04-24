@@ -5,6 +5,7 @@ import SiswaList from '../components/SiswaList';
 import PetugasList from '../components/PetugasList';
 import AnggotaList from '../components/AnggotaList';
 import StudentNisnList from '../components/StudentNisnList';
+import StaffNipList from '../components/StaffNipList';
 import Categories from '../components/Categories';
 import AdminBooks from '../components/AdminBooks';
 import AdminBorrowings from '../components/AdminBorrowings';
@@ -25,6 +26,7 @@ const AdminDashboard = () => {
 
 
 
+
     const renderContent = () => {
         switch (safeTab) {
             case 'dashboard':
@@ -37,6 +39,8 @@ const AdminDashboard = () => {
                 return <AnggotaList />;
             case 'nisn':
                 return <StudentNisnList />;
+            case 'nip-staff':
+                return <StaffNipList />;
             case 'categories':
                 return isAdmin ? <Categories /> : null;
             case 'books':

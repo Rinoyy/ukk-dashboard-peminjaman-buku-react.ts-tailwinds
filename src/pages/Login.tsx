@@ -39,7 +39,7 @@ const Login = () => {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
-                            placeholder="Masukkan username"
+                            placeholder="Username admin / petugas"
                             required
                         />
                     </div>

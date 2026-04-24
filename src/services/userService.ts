@@ -43,7 +43,7 @@ class UserService {
         return data.user;
     }
 
-    async createMember(username: string, password: string, role: 'GURU' | 'STAFF'): Promise<User> {
+    async createMember(nip: string, password: string): Promise<User> {
         const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/users/members`, {
             method: 'POST',
@@ -51,7 +51,7 @@ class UserService {
                 'Content-Type': 'application/json',
                 ...(token && { Authorization: `Bearer ${token}` }),
             },
-            body: JSON.stringify({ username, password, role }),
+            body: JSON.stringify({ nip, password }),
         });
         if (isUnauthorized(response.status)) {
             forceLogout();

@@ -1,6 +1,6 @@
 import {
     LayoutDashboard, Users, ShieldCheck, FolderOpen, BookMarked,
-    BookUp, BookDown, Banknote, LogIn, LogOut, GraduationCap, Hash,
+    BookUp, BookDown, Banknote, LogIn, LogOut, GraduationCap, Hash, BadgeCheck,
     ChevronLeft, ChevronRight, X, type LucideIcon
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
@@ -28,6 +28,7 @@ const adminMenuGroups: { label: string; items: { id: string; label: string; icon
             { id: 'petugas', label: 'Petugas', icon: ShieldCheck },
             { id: 'anggota', label: 'Guru & Staff', icon: GraduationCap },
             { id: 'nisn', label: 'Data NISN', icon: Hash },
+            { id: 'nip-staff', label: 'Data NIP', icon: BadgeCheck },
         ],
     },
     {
@@ -65,6 +66,7 @@ const petugasMenuGroups: { label: string; items: { id: string; label: string; ic
         items: [
             { id: 'anggota', label: 'Guru & Staff', icon: GraduationCap },
             { id: 'nisn', label: 'Data NISN', icon: Hash },
+            { id: 'nip-staff', label: 'Data NIP', icon: BadgeCheck },
         ],
     },
     {
