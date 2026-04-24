@@ -235,7 +235,9 @@ const AdminBooks = () => {
                                     <th className="p-3 border-b">Penulis</th>
                                     <th className="p-3 border-b">Kategori</th>
                                     <th className="p-3 border-b text-right">Harga</th>
-                                    <th className="p-3 border-b text-center">Stok</th>
+                                    <th className="p-3 border-b text-center">Tersedia</th>
+                                    <th className="p-3 border-b text-center text-orange-500">Rusak</th>
+                                    <th className="p-3 border-b text-center text-red-500">Hilang</th>
                                     <th className="p-3 border-b text-center">Eksemplar</th>
                                     <th className="p-3 border-b text-right">Aksi</th>
                                 </tr>
@@ -270,10 +272,29 @@ const AdminBooks = () => {
                                             }
                                         </td>
                                         <td className="p-3 border-b text-center">
-                                            <span className={`px-2 py-1 rounded text-xs font-semibold ${book.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                                                }`}>
-                                                {book.stock} Tersedia
+                                            <span className={`px-2 py-1 rounded text-xs font-semibold ${book.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                                                {book.stock}
                                             </span>
+                                        </td>
+                                        <td className="p-3 border-b text-center">
+                                            {(() => {
+                                                const count = (book.copies ?? []).filter(c => c.status === 'DAMAGED').length;
+                                                return (
+                                                    <span className={`px-2 py-1 rounded text-xs font-semibold ${count > 0 ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-400'}`}>
+                                                        {count}
+                                                    </span>
+                                                );
+                                            })()}
+                                        </td>
+                                        <td className="p-3 border-b text-center">
+                                            {(() => {
+                                                const count = (book.copies ?? []).filter(c => c.status === 'LOST').length;
+                                                return (
+                                                    <span className={`px-2 py-1 rounded text-xs font-semibold ${count > 0 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-400'}`}>
+                                                        {count}
+                                                    </span>
+                                                );
+                                            })()}
                                         </td>
                                         <td className="p-3 border-b text-center">
                                             <button
