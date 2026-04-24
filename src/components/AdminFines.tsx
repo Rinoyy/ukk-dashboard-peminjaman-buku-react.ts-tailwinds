@@ -245,11 +245,18 @@ const AdminFines = () => {
                                 <div className="relative">
                                     <span className="absolute left-3 top-2 text-gray-500">Rp</span>
                                     <input
-                                        type="number"
-                                        value={amountPaid}
-                                        onChange={(e) => setAmountPaid(Number(e.target.value))}
+                                        type="text"
+                                        value={amountPaid === '' ? '' : amountPaid.toLocaleString('id-ID')}
+                                        onChange={(e) => {
+                                            const raw = e.target.value.replace(/\./g, '');
+                                            if (raw === '') {
+                                                setAmountPaid('');
+                                            } else {
+                                                const num = parseInt(raw, 10);
+                                                if (!isNaN(num)) setAmountPaid(num);
+                                            }
+                                        }}
                                         className="w-full pl-10 p-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
-                                        min={selectedFine.totalFine}
                                         autoFocus
                                     />
                                 </div>
