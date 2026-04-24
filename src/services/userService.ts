@@ -43,6 +43,28 @@ class UserService {
         return data.user;
     }
 
+    async createMember(username: string, password: string, role: 'GURU' | 'STAFF'): Promise<User> {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/users/members`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
+            body: JSON.stringify({ username, password, role }),
+        });
+        if (isUnauthorized(response.status)) {
+            forceLogout();
+            throw new Error('Unauthorized');
+        }
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Gagal membuat akun anggota');
+        }
+        const data = await response.json();
+        return data.user;
+    }
+
     async deleteUser(id: number) {
         if (!id || id <= 0) {
             throw new Error('ID user tidak valid');

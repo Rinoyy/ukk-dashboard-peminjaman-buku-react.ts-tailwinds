@@ -21,9 +21,9 @@ export const useBorrow = () => {
         }
     }, []);
 
-    const handleApprove = async (id: number, status: 'BORROWED' | 'REJECTED', rejectReason?: string, dueDate?: string) => {
+    const handleApprove = async (id: number, status: 'BORROWED' | 'REJECTED', rejectReason?: string) => {
         try {
-            await borrowService.adminApproveBorrow(id, status, rejectReason, dueDate);
+            await borrowService.adminApproveBorrow(id, status, rejectReason);
             fetchBorrowings();
             return true;
         } catch (err) {
