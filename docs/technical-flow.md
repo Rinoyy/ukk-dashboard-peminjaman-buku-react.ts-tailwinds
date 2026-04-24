@@ -30,36 +30,59 @@ dashboard/
 │   │
 │   ├── pages/
 │   │   ├── Login.tsx              # Halaman login admin/petugas
-│   │   ├── AdminDashboard.tsx     # Halaman utama (dengan tab navigasi)
-│   │   └── AddPetugas.tsx         # Form tambah akun petugas
+│   │   └── AdminDashboard.tsx     # Halaman utama (dengan tab navigasi)
 │   │
 │   ├── components/
-│   │   ├── DashboardLayout.tsx    # Layout: sidebar + content area
+│   │   ├── DashboardLayout.tsx    # Layout wrapper: sidebar + area konten
 │   │   ├── DashboardOverview.tsx  # Widget statistik ringkas
+│   │   ├── Sidebar.tsx            # Navigasi sidebar
 │   │   ├── AdminBooks.tsx         # Manajemen buku + copies
 │   │   ├── AdminBorrowings.tsx    # Kelola peminjaman + pengembalian
 │   │   ├── AdminFines.tsx         # Kelola denda + pembayaran
-│   │   ├── SiswaList.tsx          # Daftar siswa
-│   │   ├── Visits.tsx             # Data kunjungan + scan
+│   │   ├── SiswaList.tsx          # Daftar siswa (role SISWA)
+│   │   ├── PetugasList.tsx        # Daftar petugas (ADMIN only)
+│   │   ├── AnggotaList.tsx        # Daftar anggota perpustakaan
+│   │   ├── StudentNisnList.tsx    # Manajemen NISN whitelist (ADMIN/PETUGAS)
+│   │   ├── Visits.tsx             # Data kunjungan + scan QR
 │   │   ├── Categories.tsx         # Manajemen kategori
+│   │   ├── UserProfile.tsx        # Widget profil pengguna
+│   │   ├── ActivityLogDropdown.tsx # Dropdown log aktivitas
+│   │   ├── EmptyState.tsx         # Komponen empty state reusable
 │   │   └── Pagination.tsx         # Komponen paginasi reusable
 │   │
 │   ├── hooks/
 │   │   ├── useAuth.ts             # State & logic autentikasi
 │   │   ├── useBooks.ts            # CRUD buku
 │   │   ├── useBorrow.ts           # Approve/reject/verify peminjaman
-│   │   └── useFines.ts            # Kelola denda
+│   │   ├── useFines.ts            # Kelola denda
+│   │   ├── useUsers.ts            # CRUD user & petugas
+│   │   ├── useCategories.ts       # CRUD kategori
+│   │   ├── useVisits.ts           # Data kunjungan
+│   │   └── useExport.ts           # Export CSV
 │   │
 │   ├── services/
-│   │   ├── authService.ts         # API: login, logout
-│   │   ├── bookService.ts         # API: CRUD buku
-│   │   └── visitService.ts        # API: data kunjungan
+│   │   ├── authService.ts         # API: login
+│   │   ├── bookService.ts         # API: CRUD buku + copies
+│   │   ├── borrowService.ts       # API: approve/reject/verify/pay
+│   │   ├── categoryService.ts     # API: CRUD kategori
+│   │   ├── userService.ts         # API: CRUD user & petugas
+│   │   ├── studentNisnService.ts  # API: CRUD NISN whitelist
+│   │   ├── exportService.ts       # API: export CSV
+│   │   └── visitService.ts        # API: data kunjungan + scan
 │   │
 │   ├── lib/
 │   │   └── api.ts                 # Fetch wrapper + auth header + 401 handler
 │   │
 │   └── types/
-│       └── users.ts              #  TypeScript interfaces
+│       ├── auth.ts                # Auth types
+│       ├── book.ts                # Book & BookCopy types
+│       ├── borrowing.ts           # Borrowing types
+│       ├── category.ts            # Category types
+│       ├── fines.ts               # Fines types
+│       ├── payment.ts             # Payment types
+│       ├── user.ts                # User types
+│       ├── visit.ts               # Visit types
+│       └── index.ts               # Re-exports
 │
 ├── package.json
 ├── vite.config.ts
@@ -139,19 +162,20 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 ## Alur Teknis: Routing
 
 ```
-/                      → RootRedirect → /login (atau /admin jika sudah login)
-/login                 → Login.tsx
-/admin                 → ProtectedRoute (cek role ADMIN/PETUGAS)
-  └── /admin/dashboard → AdminDashboard.tsx
-        ├── Tab: Dashboard  → DashboardOverview
-        ├── Tab: Users      → SiswaList
-        ├── Tab: Categories → Categories
-        ├── Tab: Books      → AdminBooks
-        ├── Tab: Borrowings → AdminBorrowings (mode: PENDING requests)
-        ├── Tab: Returns    → AdminBorrowings (mode: RETURN_PENDING)
-        ├── Tab: Fines      → AdminFines
-        └── Tab: Visits     → Visits
-/admin/add-petugas     → AddPetugas.tsx (ProtectedRoute)
+/            → RootRedirect → /login (atau /admin jika sudah login)
+/login       → Login.tsx
+/admin       → ProtectedRoute (cek role ADMIN/PETUGAS) → AdminDashboard.tsx
+               ├── Tab: Dashboard  → DashboardOverview
+               ├── Tab: Users      → SiswaList (semua role)
+               ├── Tab: Petugas    → PetugasList (ADMIN only)
+               ├── Tab: Anggota    → AnggotaList
+               ├── Tab: NISN       → StudentNisnList (ADMIN/PETUGAS)
+               ├── Tab: Categories → Categories (ADMIN only)
+               ├── Tab: Books      → AdminBooks (ADMIN only)
+               ├── Tab: Borrowings → AdminBorrowings (mode: PENDING)
+               ├── Tab: Returns    → AdminBorrowings (mode: RETURN_PENDING)
+               ├── Tab: Fines      → AdminFines
+               └── Tab: Visits     → Visits
 ```
 
 ---
@@ -186,17 +210,17 @@ const useBorrow = () => {
   }
 
   const approveBorrow = async (id: number) => {
-    await api.patch(`/borrow/${id}/approve`, { status: 'BORROWED' })
+    await api.post(`/borrow/${id}/approve`, { status: 'BORROWED' })
     await fetchBorrowings()  // refresh list
   }
 
   const rejectBorrow = async (id: number, rejectReason: string) => {
-    await api.patch(`/borrow/${id}/approve`, { status: 'REJECTED', rejectReason })
+    await api.post(`/borrow/${id}/approve`, { status: 'REJECTED', rejectReason })
     await fetchBorrowings()
   }
 
   const verifyReturn = async (id: number, condition: string, damageFee: number) => {
-    await api.patch(`/borrow/${id}/verify-return`, { status: 'RETURNED', condition, damageFee })
+    await api.post(`/borrow/${id}/verify-return`, { status: 'RETURNED', condition, damageFee })
     await fetchBorrowings()
   }
 
@@ -251,19 +275,29 @@ const bookService = {
 | Categories | PUT | `/api/categories/:id` | Update kategori |
 | Categories | DELETE | `/api/categories/:id` | Hapus kategori |
 | Borrowings | GET | `/api/borrow` | Semua peminjaman |
-| Borrowings | PATCH | `/api/borrow/:id/approve` | Approve/Reject |
-| Borrowings | PATCH | `/api/borrow/:id/pickup` | Tandai diambil |
-| Borrowings | PATCH | `/api/borrow/:id/verify-return` | Verifikasi pengembalian |
+| Borrowings | POST | `/api/borrow/:id/approve` | Approve/Reject |
+| Borrowings | POST | `/api/borrow/:id/pickup` | Tandai diambil |
+| Borrowings | POST | `/api/borrow/:id/verify-return` | Verifikasi pengembalian |
 | Fines | GET | `/api/borrow/fines-recap` | Rekap denda |
-| Fines | POST | `/api/borrow/:id/pay-fine` | Proses pembayaran |
+| Fines | POST | `/api/borrow/:id/pay` | Proses pembayaran |
 | Users | GET | `/api/users` | Daftar pengguna |
 | Users | POST | `/api/users` | Tambah petugas |
 | Users | DELETE | `/api/users/:id` | Hapus user |
+| StudentNISN | GET | `/api/student-nisns` | Daftar NISN whitelist |
+| StudentNISN | POST | `/api/student-nisns` | Tambah NISN |
+| StudentNISN | PUT | `/api/student-nisns/:id` | Update NISN |
+| StudentNISN | DELETE | `/api/student-nisns/:id` | Hapus NISN |
 | Visits | GET | `/api/visits` | Data kunjungan |
 | Visits | POST | `/api/visits/checkin` | Check-in via QR |
 | Visits | POST | `/api/visits/checkout` | Check-out via QR |
 | Visits | GET | `/api/visits/today/count` | Jumlah hari ini |
-| Export | GET | `/api/export/*` | Export CSV |
+| Export | GET | `/api/export/books` | Export buku |
+| Export | GET | `/api/export/categories` | Export kategori |
+| Export | GET | `/api/export/borrowings` | Export peminjaman |
+| Export | GET | `/api/export/returns` | Export pengembalian |
+| Export | GET | `/api/export/users` | Export siswa |
+| Export | GET | `/api/export/damaged` | Export buku rusak/hilang |
+| Export | GET | `/api/export/visits` | Export kunjungan |
 
 ---
 
