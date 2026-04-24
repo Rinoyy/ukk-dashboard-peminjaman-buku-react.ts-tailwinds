@@ -520,11 +520,11 @@ const AdminBorrowings = ({ mode }: { mode: 'borrowings' | 'returns' }) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="mb-6 bg-blue-50 border border-blue-100 rounded-lg px-4 py-3">
+                        {/* <div className="mb-6 bg-blue-50 border border-blue-100 rounded-lg px-4 py-3">
                             <p className="text-sm text-blue-700">
                                 Batas pengembalian otomatis ditetapkan <span className="font-semibold">7 hari</span> dari tanggal persetujuan.
                             </p>
-                        </div>
+                        </div> */}
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => setIsApproveModalOpen(false)}
