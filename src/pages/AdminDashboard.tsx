@@ -4,6 +4,7 @@ import DashboardOverview from '../components/DashboardOverview';
 import SiswaList from '../components/SiswaList';
 import PetugasList from '../components/PetugasList';
 import AnggotaList from '../components/AnggotaList';
+import StudentNisnList from '../components/StudentNisnList';
 import Categories from '../components/Categories';
 import AdminBooks from '../components/AdminBooks';
 import AdminBorrowings from '../components/AdminBorrowings';
@@ -23,6 +24,7 @@ const AdminDashboard = () => {
 
 
 
+
     const renderContent = () => {
         switch (safeTab) {
             case 'dashboard':
@@ -33,6 +35,8 @@ const AdminDashboard = () => {
                 return isAdmin ? <PetugasList /> : null;
             case 'anggota':
                 return <AnggotaList />;
+            case 'nisn':
+                return <StudentNisnList />;
             case 'categories':
                 return isAdmin ? <Categories /> : null;
             case 'books':

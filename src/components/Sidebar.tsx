@@ -1,6 +1,6 @@
 import {
     LayoutDashboard, Users, ShieldCheck, FolderOpen, BookMarked,
-    BookUp, BookDown, Banknote, LogIn, LogOut, GraduationCap,
+    BookUp, BookDown, Banknote, LogIn, LogOut, GraduationCap, Hash,
     ChevronLeft, ChevronRight, X, type LucideIcon
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
@@ -27,6 +27,7 @@ const adminMenuGroups: { label: string; items: { id: string; label: string; icon
             { id: 'users', label: 'Siswa', icon: Users },
             { id: 'petugas', label: 'Petugas', icon: ShieldCheck },
             { id: 'anggota', label: 'Guru & Staff', icon: GraduationCap },
+            { id: 'nisn', label: 'Data NISN', icon: Hash },
         ],
     },
     {
@@ -63,6 +64,7 @@ const petugasMenuGroups: { label: string; items: { id: string; label: string; ic
         label: 'MANAJEMEN PENGGUNA',
         items: [
             { id: 'anggota', label: 'Guru & Staff', icon: GraduationCap },
+            { id: 'nisn', label: 'Data NISN', icon: Hash },
         ],
     },
     {
