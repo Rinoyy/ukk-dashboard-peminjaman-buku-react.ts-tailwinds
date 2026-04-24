@@ -10,7 +10,6 @@ import { CheckCircle, XCircle, AlertCircle, DollarSign, BookOpen, Download, Sear
 
 const todayStr = new Date().toISOString().slice(0, 10);
 
-const BORROWING_STATUSES = ['PENDING', 'BORROWED', 'REJECTED', 'CANCELLED'];
 const RETURN_STATUSES = ['RETURN_PENDING', 'RETURNED'];
 
 const AdminBorrowings = ({ mode }: { mode: 'borrowings' | 'returns' }) => {
@@ -168,8 +167,9 @@ const AdminBorrowings = ({ mode }: { mode: 'borrowings' | 'returns' }) => {
 
 
     const filteredBorrowings = useMemo(() => {
-        const allowedStatuses = mode === 'borrowings' ? BORROWING_STATUSES : RETURN_STATUSES;
-        const byMode = borrowings.filter((b) => allowedStatuses.includes(b.status));
+        const byMode = mode === 'borrowings'
+            ? borrowings
+            : borrowings.filter((b) => RETURN_STATUSES.includes(b.status));
         const q = search.toLowerCase();
         if (!q) return byMode;
         return byMode.filter((b) =>
