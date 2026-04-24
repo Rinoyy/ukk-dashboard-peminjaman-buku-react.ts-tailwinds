@@ -227,7 +227,7 @@ const AdminBooks = () => {
             ) : (
                 <>
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                        <table className="min-w-max w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-gray-100">
                                     <th className="p-3 border-b">Sampul</th>
@@ -236,8 +236,8 @@ const AdminBooks = () => {
                                     <th className="p-3 border-b">Kategori</th>
                                     <th className="p-3 border-b text-right">Harga</th>
                                     <th className="p-3 border-b text-center">Tersedia</th>
-                                    <th className="p-3 border-b text-center text-orange-500">Rusak</th>
-                                    <th className="p-3 border-b text-center text-red-500">Hilang</th>
+                                    <th className="p-3 border-b text-center">Rusak</th>
+                                    <th className="p-3 border-b text-center">Hilang</th>
                                     <th className="p-3 border-b text-center">Eksemplar</th>
                                     <th className="p-3 border-b text-right">Aksi</th>
                                 </tr>
